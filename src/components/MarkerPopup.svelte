@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Restaurant } from "../lib/restaurants";
+    import { tierName, type Restaurant } from "../lib/restaurants";
 
     let { restaurant } = $props<{ restaurant: Restaurant }>();
 </script>
@@ -9,19 +9,19 @@
 </header>
 
 <div class="meta-grid">
-    <div class="meta-item">
+    <div class="meta-item meta-item-tier">
         <span class="material-symbols-outlined">workspace_premium</span>
-        <div>
+        <div class="meta-copy">
             <span class="meta-label">評級</span>
-            <strong>{restaurant.tier}</strong>
+            <strong class="meta-value">{tierName[restaurant.tier]}</strong>
         </div>
     </div>
 
     <div class="meta-item">
         <span class="material-symbols-outlined">payments</span>
-        <div>
+        <div class="meta-copy">
             <span class="meta-label">價位</span>
-            <strong>${restaurant.priceBucket}</strong>
+            <strong class="meta-value">${restaurant.priceBucket}</strong>
         </div>
     </div>
 </div>
@@ -80,28 +80,33 @@
 
     .meta-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(9.5rem, 1.3fr) minmax(7rem, 1fr);
         gap: 0.65rem;
     }
 
     .meta-item {
         display: flex;
         gap: 0.55rem;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        padding: 0.5rem 0.6rem;
+        padding: 0.75rem 0.8rem;
+        min-width: 0;
         border: 1px solid var(--border);
         border-radius: 0.9rem;
         background: linear-gradient(-45deg, color-mix(in srgb, var(--bg) 92%, rgb(192, 192, 192)), var(--bg));
-        display: inline-flex;
-        align-items: center;
 
         .material-symbols-outlined {
+            flex: 0 0 auto;
             font-size: 1rem;
             line-height: 1;
             margin-top: 0.15rem;
             color: var(--accent);
         }
+    }
+
+    .meta-copy {
+        min-width: 0;
+        flex: 1 1 auto;
     }
 
     .meta-label {
@@ -112,6 +117,25 @@
         letter-spacing: 0.08em;
         text-transform: uppercase;
         color: var(--text);
+    }
+
+    .meta-value {
+        display: block;
+        font-size: 0.92rem;
+        line-height: 1.25;
+        white-space: normal;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 360px) {
+        .meta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .meta-item-tier {
+            min-width: 0;
+        }
     }
 
     .tag-row {

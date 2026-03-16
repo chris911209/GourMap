@@ -34,3 +34,5 @@ export const providers = {
 };
 
 export const provider = providers.OpenStreetMapHot;
+
+export const geocodeAttribution = `Powered by <a href="https://developers.arcgis.com/documentation/mapping-and-location-services/geocoding/" target="_blank" rel="noopener noreferrer">Esri</a>`;

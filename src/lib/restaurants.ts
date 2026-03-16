@@ -39,12 +39,22 @@ export function mountPopupContent(shop: Restaurant): HTMLDivElement {
     return container;
 }
 
-export const tierName = {
+export const tierName: Record<Tier, string> = {
     0: "此生必吃",
     1: "贊不絕口",
     2: "值得一試",
     3: "普普通通",
     4: "將就果腹",
     5: "難以下嚥",
-    6: "犬不爭食"
-}
+    6: "犬不爭食",
+};
+
+export const tierColor: Record<Tier, string> = {
+    0: "#d73027",
+    1: "#f46d43",
+    2: "#fdae61",
+    3: "#fee08b",
+    4: "#d9ef8b",
+    5: "#66bd63",
+    6: "#1a9850",
+};

@@ -5,6 +5,9 @@
     import { geocodeAttribution, initView, initZoom, provider } from "./lib/map";
     import { mountPopupContent, tierColor, type RestaurantDataset } from "./lib/restaurants";
 
+    const dataSourceFiles = ["noodle.json", "curry.json"];
+    const dataUrls = dataSourceFiles.map((file) => `${import.meta.env.BASE_URL}data/${file}`);
+
     let mapElement: HTMLDivElement;
     let loadError = $state<string | null>(null);
     let legendOpen = $state(false);
@@ -43,17 +46,23 @@
 
     async function loadRestaurants(map: L.Map) {
         try {
-            const response = await fetch("/data/noodle.json");
+            const datasets = await Promise.all(
+                dataUrls.map(async (dataUrl, index) => {
+                    const response = await fetch(dataUrl);
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch restaurant data: ${response.status} ${response.statusText}`);
-            }
+                    if (!response.ok) {
+                        throw new Error(
+                            `Failed to fetch ${dataSourceFiles[index]}: ${response.status} ${response.statusText}`,
+                        );
+                    }
 
-            const dataset = (await response.json()) as RestaurantDataset;
+                    return (await response.json()) as RestaurantDataset;
+                }),
+            );
 
             const markerGroup = L.layerGroup().addTo(map);
 
-            for (const shop of dataset.items) {
+            for (const shop of datasets.flatMap((dataset) => dataset.items)) {
                 L.circleMarker([shop.lat, shop.lng], {
                     radius: 10,
                     fillColor: tierColor[shop.tier],
@@ -75,6 +84,10 @@
 <main class="app">
     <header class="page-header">
         <h1>GourMap</h1>
+        <a class="source-link" href="https://github.com/Dogeon188/GourMap" target="_blank" rel="noreferrer">
+            <span class="material-symbols-outlined">code_xml</span>
+            Source code
+        </a>
     </header>
 
     {#if loadError}
@@ -83,8 +96,6 @@
 
     <section class="map-shell">
         <div bind:this={mapElement} class="map"></div>
-
-        <LegendPanel open={legendOpen} onOpenChange={setLegendOpen} />
 
         <OverlayPanel
             open={filterPanelOpen}
@@ -101,6 +112,8 @@
                 <p class="placeholder-copy">預留給之後的 filtering UI</p>
             </div>
         </OverlayPanel>
+        
+        <LegendPanel open={legendOpen} onOpenChange={setLegendOpen} />
     </section>
 </main>
 
@@ -112,6 +125,10 @@
     }
 
     .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
         padding: 1rem;
         background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
         border-bottom: 1px solid #ece8df;
@@ -121,6 +138,20 @@
             font-size: clamp(1.75rem, 4vw, 2.5rem);
             letter-spacing: -0.04em;
         }
+    }
+
+    .source-link {
+        color: var(--accent);
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        display: inline-flex;
+        gap: 0.25rem;
+    }
+
+    .source-link:hover {
+        text-decoration: underline;
     }
 
     .map-shell {

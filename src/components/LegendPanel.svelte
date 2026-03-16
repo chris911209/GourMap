@@ -16,7 +16,7 @@
     {onOpenChange}
     title="圖例"
     side="right"
-    hiddenIcon="format_list_bulleted"
+    hiddenIcon="info"
     panelId="tier-legend"
     openLabel="展開圖例"
     closeLabel="收起圖例"

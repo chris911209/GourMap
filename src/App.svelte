@@ -1,11 +1,11 @@
 <script lang="ts">
     import L from "leaflet";
-    import { render } from "svelte/server";
     import { initView, initZoom, provider } from "./lib/map";
     import { mountPopupContent, type RestaurantDataset } from "./lib/restaurants";
 
     let mapElement: HTMLDivElement;
     let loadError = $state<string | null>(null);
+    let geocodingAttribution = $state<string | null>(null);
 
     $effect(() => {
         const map = L.map(mapElement).setView(initView, initZoom);
@@ -27,10 +27,11 @@
             const response = await fetch("/data/noodle.json");
 
             if (!response.ok) {
-                throw new Error(`Failed to load ramen.json: ${response.status}`);
+                throw new Error(`Failed to fetch restaurant data: ${response.status} ${response.statusText}`);
             }
 
             const dataset = (await response.json()) as RestaurantDataset;
+            geocodingAttribution = dataset.attribution?.geocoding ?? null;
 
             const markerGroup = L.layerGroup().addTo(map);
 
@@ -59,7 +60,19 @@
 
 <div bind:this={mapElement} class="map"></div>
 
+{#if geocodingAttribution}
+    <p class="attribution-note">{geocodingAttribution}</p>
+{/if}
+
 <style lang="scss">
+    .attribution-note {
+        margin: 0;
+        padding: 0.75rem 1rem 1rem;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: #5f5b66;
+    }
+
     .load-error {
         margin: 1rem;
         color: #b42318;

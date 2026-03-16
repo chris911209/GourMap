@@ -1,6 +1,5 @@
 import { mount } from "svelte";
 import MarkerPopup from "../components/MarkerPopup.svelte";
-import { escapeHtml } from "./string";
 
 export type District = string;
 
@@ -23,6 +22,9 @@ export type Restaurant = {
 
 export type RestaurantDataset = {
     $schema?: string;
+    attribution?: {
+        geocoding?: string;
+    };
     items: Restaurant[];
 };
 
@@ -35,4 +37,14 @@ export function mountPopupContent(shop: Restaurant): HTMLDivElement {
         target: container,
     });
     return container;
+}
+
+export const tierName = {
+    0: "此生必吃",
+    1: "贊不絕口",
+    2: "值得一試",
+    3: "普普通通",
+    4: "將就果腹",
+    5: "難以下嚥",
+    6: "犬不爭食"
 }

@@ -3,15 +3,21 @@
     import LegendPanel from "./components/LegendPanel.svelte";
     import OverlayPanel from "./components/OverlayPanel.svelte";
     import { geocodeAttribution, initView, initZoom, provider } from "./lib/map";
-    import { mountPopupContent, tierColor, type RestaurantDataset } from "./lib/restaurants";
+    import { mountPopupContent, tierColor, tierName, type Restaurant, type RestaurantDataset } from "./lib/restaurants";
 
     const dataSourceFiles = ["noodle.json", "curry.json"];
     const dataUrls = dataSourceFiles.map((file) => `${import.meta.env.BASE_URL}data/${file}`);
 
     let mapElement: HTMLDivElement;
+    let map: L.Map | null = null;
+    let markerGroup: L.LayerGroup | null = null;
     let loadError = $state<string | null>(null);
     let legendOpen = $state(false);
     let filterPanelOpen = $state(false);
+    let allRestaurants = $state<Restaurant[]>([]);
+    let selectedDistrict = $state("all");
+    let selectedTag = $state("all");
+    let selectedTier = $state("all");
 
     function setLegendOpen(open: boolean) {
         legendOpen = open;
@@ -30,21 +36,61 @@
     }
 
     $effect(() => {
-        const map = L.map(mapElement).setView(initView, initZoom);
+        const mapInstance = L.map(mapElement).setView(initView, initZoom);
 
         L.tileLayer(provider.url, {
             maxZoom: provider.maxZoom,
             attribution: provider.attribution + " | " + geocodeAttribution,
-        }).addTo(map);
+        }).addTo(mapInstance);
 
-        loadRestaurants(map);
+        map = mapInstance;
+        loadRestaurants();
 
         return () => {
-            map.remove();
+            markerGroup?.remove();
+            markerGroup = null;
+            map = null;
+            mapInstance.remove();
         };
     });
 
-    async function loadRestaurants(map: L.Map) {
+    let districtOptions = $derived.by(() => getUniqueOptions(allRestaurants.map((shop) => shop.district)));
+    let tagOptions = $derived.by(() => getUniqueOptions(allRestaurants.flatMap((shop) => shop.tags ?? [])));
+    let tierOptions = $derived.by(() => [...new Set(allRestaurants.map((shop) => shop.tier))].sort((a, b) => a - b));
+    let filteredRestaurants = $derived.by(() =>
+        allRestaurants.filter((shop) => {
+            const districtMatches = selectedDistrict === "all" || shop.district === selectedDistrict;
+            const tagMatches = selectedTag === "all" || (shop.tags ?? []).includes(selectedTag);
+            const tierMatches = selectedTier === "all" || String(shop.tier) === selectedTier;
+
+            return districtMatches && tagMatches && tierMatches;
+        }),
+    );
+
+    $effect(() => {
+        if (!map) {
+            return;
+        }
+
+        markerGroup?.remove();
+        markerGroup = L.layerGroup().addTo(map);
+
+        for (const shop of filteredRestaurants) {
+            L.circleMarker([shop.lat, shop.lng], {
+                radius: 10,
+                fillColor: tierColor[shop.tier],
+                color: "#fff",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.92,
+            })
+                .addTo(markerGroup)
+                .bindTooltip(`<b>T${shop.tier}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })
+                .bindPopup(mountPopupContent(shop));
+        }
+    });
+
+    async function loadRestaurants() {
         try {
             const datasets = await Promise.all(
                 dataUrls.map(async (dataUrl, index) => {
@@ -60,24 +106,21 @@
                 }),
             );
 
-            const markerGroup = L.layerGroup().addTo(map);
-
-            for (const shop of datasets.flatMap((dataset) => dataset.items)) {
-                L.circleMarker([shop.lat, shop.lng], {
-                    radius: 10,
-                    fillColor: tierColor[shop.tier],
-                    color: "#fff",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.92,
-                })
-                    .addTo(markerGroup)
-                    .bindTooltip(`<b>T${shop.tier}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })
-                    .bindPopup(mountPopupContent(shop));
-            }
+            allRestaurants = datasets.flatMap((dataset) => dataset.items);
+            loadError = null;
         } catch (error) {
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
+    }
+
+    function getUniqueOptions(values: string[]) {
+        return [...new Set(values)].sort((left, right) => left.localeCompare(right, "zh-Hant"));
+    }
+
+    function resetFilters() {
+        selectedDistrict = "all";
+        selectedTag = "all";
+        selectedTier = "all";
     }
 </script>
 
@@ -107,12 +150,44 @@
             openLabel="展開篩選面板"
             closeLabel="收起篩選面板"
         >
-            <div class="placeholder-panel">
-                <p class="placeholder-title">Filter Panel</p>
-                <p class="placeholder-copy">預留給之後的 filtering UI</p>
-            </div>
+            <form class="filter-panel">
+                <div class="filter-header">
+                    <p class="filter-count">{filteredRestaurants.length} / {allRestaurants.length} 間店家</p>
+                    <button class="filter-reset" type="button" onclick={resetFilters}>清除</button>
+                </div>
+
+                <label class="filter-field">
+                    <span class="filter-label">行政區</span>
+                    <select bind:value={selectedDistrict}>
+                        <option value="all">全部</option>
+                        {#each districtOptions as district}
+                            <option value={district}>{district}</option>
+                        {/each}
+                    </select>
+                </label>
+
+                <label class="filter-field">
+                    <span class="filter-label">標籤</span>
+                    <select bind:value={selectedTag}>
+                        <option value="all">全部</option>
+                        {#each tagOptions as tag}
+                            <option value={tag}>{tag}</option>
+                        {/each}
+                    </select>
+                </label>
+
+                <label class="filter-field">
+                    <span class="filter-label">Tier</span>
+                    <select bind:value={selectedTier}>
+                        <option value="all">全部</option>
+                        {#each tierOptions as tier}
+                            <option value={String(tier)}>T{tier} {tierName[tier]}</option>
+                        {/each}
+                    </select>
+                </label>
+            </form>
         </OverlayPanel>
-        
+
         <LegendPanel open={legendOpen} onOpenChange={setLegendOpen} />
     </section>
 </main>
@@ -169,20 +244,61 @@
         width: 100%;
     }
 
-    .placeholder-panel {
+    .filter-panel {
         min-width: 14rem;
         display: grid;
-        gap: 0.35rem;
+        gap: 0.85rem;
     }
 
-    .placeholder-title {
+    .filter-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .filter-count {
         font-weight: 700;
         color: var(--text-h);
     }
 
-    .placeholder-copy {
+    .filter-reset {
+        border: none;
+        background: transparent;
+        color: var(--accent);
+        font: inherit;
         font-size: 0.9rem;
-        line-height: 1.45;
-        color: var(--text);
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .filter-reset:hover {
+        text-decoration: underline;
+    }
+
+    .filter-field {
+        display: grid;
+        gap: 0.35rem;
+    }
+
+    .filter-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-h);
+    }
+
+    .filter-field select {
+        min-width: 14rem;
+        padding: 0.7rem 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--text-h);
+        font: inherit;
+    }
+
+    .filter-field select:focus {
+        outline: 2px solid color-mix(in srgb, var(--accent) 35%, white);
+        outline-offset: 2px;
     }
 </style>

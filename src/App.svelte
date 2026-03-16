@@ -1,16 +1,10 @@
 <script lang="ts">
-    import L from "leaflet";
     import LegendPanel from "./components/LegendPanel.svelte";
     import OverlayPanel from "./components/OverlayPanel.svelte";
-    import { geocodeAttribution, initView, initZoom, provider } from "./lib/map";
-    import { mountPopupContent, tierColor, tierName, type Restaurant, type RestaurantDataset } from "./lib/restaurants";
+    import RestaurantMap from "./components/RestaurantMap.svelte";
+    import { loadRestaurants as fetchRestaurants } from "./lib/data";
+    import { tierName, type Restaurant } from "./lib/restaurants";
 
-    const dataSourceFiles = ["noodle.json", "curry.json"];
-    const dataUrls = dataSourceFiles.map((file) => `${import.meta.env.BASE_URL}data/${file}`);
-
-    let mapElement: HTMLDivElement;
-    let map: L.Map | null = null;
-    let markerGroup: L.LayerGroup | null = null;
     let loadError = $state<string | null>(null);
     let legendOpen = $state(false);
     let filterPanelOpen = $state(false);
@@ -36,22 +30,7 @@
     }
 
     $effect(() => {
-        const mapInstance = L.map(mapElement).setView(initView, initZoom);
-
-        L.tileLayer(provider.url, {
-            maxZoom: provider.maxZoom,
-            attribution: provider.attribution + " | " + geocodeAttribution,
-        }).addTo(mapInstance);
-
-        map = mapInstance;
         loadRestaurants();
-
-        return () => {
-            markerGroup?.remove();
-            markerGroup = null;
-            map = null;
-            mapInstance.remove();
-        };
     });
 
     let districtOptions = $derived.by(() => getUniqueOptions(allRestaurants.map((shop) => shop.district)));
@@ -67,46 +46,9 @@
         }),
     );
 
-    $effect(() => {
-        if (!map) {
-            return;
-        }
-
-        markerGroup?.remove();
-        markerGroup = L.layerGroup().addTo(map);
-
-        for (const shop of filteredRestaurants) {
-            L.circleMarker([shop.lat, shop.lng], {
-                radius: 10,
-                fillColor: tierColor[shop.tier],
-                color: "#fff",
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0.92,
-            })
-                .addTo(markerGroup)
-                .bindTooltip(`<b>T${shop.tier}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })
-                .bindPopup(mountPopupContent(shop));
-        }
-    });
-
     async function loadRestaurants() {
         try {
-            const datasets = await Promise.all(
-                dataUrls.map(async (dataUrl, index) => {
-                    const response = await fetch(dataUrl);
-
-                    if (!response.ok) {
-                        throw new Error(
-                            `Failed to fetch ${dataSourceFiles[index]}: ${response.status} ${response.statusText}`,
-                        );
-                    }
-
-                    return (await response.json()) as RestaurantDataset;
-                }),
-            );
-
-            allRestaurants = datasets.flatMap((dataset) => dataset.items);
+            allRestaurants = await fetchRestaurants();
             loadError = null;
         } catch (error) {
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
@@ -137,8 +79,7 @@
         <p class="load-error">{loadError}</p>
     {/if}
 
-    <section class="map-shell">
-        <div bind:this={mapElement} class="map"></div>
+    <RestaurantMap restaurants={filteredRestaurants}>
 
         <OverlayPanel
             open={filterPanelOpen}
@@ -189,7 +130,7 @@
         </OverlayPanel>
 
         <LegendPanel open={legendOpen} onOpenChange={setLegendOpen} />
-    </section>
+    </RestaurantMap>
 </main>
 
 <style lang="scss">
@@ -229,19 +170,9 @@
         text-decoration: underline;
     }
 
-    .map-shell {
-        position: relative;
-        flex-grow: 1;
-    }
-
     .load-error {
         margin: 1rem;
         color: #b42318;
-    }
-
-    .map {
-        height: 100%;
-        width: 100%;
     }
 
     .filter-panel {

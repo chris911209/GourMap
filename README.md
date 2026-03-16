@@ -13,7 +13,7 @@ Inspired by [Taipei Burger Map](https://hsieh-george.github.io/taipei-burger-map
 - Supports filtering by district, tag, and tier
 - Shows popup details including notes, price bucket, tags, and a Google Maps link
 
-If you want to add more sources, update `dataSourceFiles` in [`src/App.svelte`](./src/App.svelte).
+If you want to add more sources, update `dataSourceFiles` in [`src/lib/data.ts`](./src/lib/data.ts).
 
 ## Tech stack
 
@@ -68,6 +68,10 @@ By default, the converter enriches rows that are missing either coordinates or a
 - Required: at least one of `經緯度` or `地址`
 - Optional: `筆記`
 - Optional: `標籤`
+
+## Deploy on GitHub Pages
+
+The app can be deployed on GitHub Pages by configuring the repository's Pages settings (Repository > Settings > Pages > Source set to "GitHub Actions") and pushing to the `main` branch. The workflow will build the app and deploy it to Pages automatically.
 
 ## Project structure
 

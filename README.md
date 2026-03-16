@@ -1,9 +1,19 @@
-# GourMap 咕嚕地圖
+# GourMap
 
 GourMap is a small Svelte 5 + Leaflet app for browsing a personal restaurant dataset on an interactive map.
-It loads marker data from `public/data/*.json`, renders each shop as a map marker, and shows restaurant details in a popup.
 
-The repo also includes a CSV-to-JSON converter in [`parseData.ts`](/Users/dogeon/Documents/code/js/gourmap/parseData.ts). That script turns a spreadsheet-style source file into the JSON dataset used by the frontend, and can enrich missing coordinates or addresses through ArcGIS geocoding.
+Inspired by [Taipei Burger Map](https://hsieh-george.github.io/taipei-burger-map/).
+
+[繁體中文說明](./README-tw.md)
+
+## What it does
+
+- Loads one or more restaurant datasets from `public/data/*.json`
+- Renders each restaurant as a color-coded marker based on tier
+- Supports filtering by district, tag, and tier
+- Shows popup details including notes, price bucket, tags, and a Google Maps link
+
+If you want to add more sources, update `dataSourceFiles` in [`src/App.svelte`](./src/App.svelte).
 
 ## Tech stack
 
@@ -11,14 +21,14 @@ The repo also includes a CSV-to-JSON converter in [`parseData.ts`](/Users/dogeon
 - Vite
 - TypeScript
 - Leaflet
-- Bun for the CSV conversion script
+- Bun for package management and the CSV conversion workflow
 
-## How to develop
+## Local development
 
 ### Requirements
 
-- Bun is recommended for both building the web app and running the CSV converter.
-- Node.js can also be used, but use it at your own risk since the project is primarily tested with Bun.
+- Bun is the primary runtime used in this repo
+- Node.js may work for the frontend, but the data conversion script is written for Bun
 
 ### Install dependencies
 
@@ -32,28 +42,43 @@ bun install
 bun run dev
 ```
 
-Vite will start a local dev server. Open the URL shown in the terminal to view the map.
+## CSV to JSON workflow
 
-## Data workflow
+The repo includes a converter in [`parseData.ts`](./parseData.ts) for turning spreadsheet exports into app-ready JSON.
 
-Convert a CSV file into the JSON format used by the app:
+### 1. Prepare the CSV
 
-```bash
-bun run convert:csv -- noodle2.csv --out public/data/noodle.json
-```
+Start from a Google Sheet such as this [template](https://docs.google.com/spreadsheets/d/1mGLvi3M9-5V9HhEXjmIzgJdwr2YWqURBffiKIiwnI-Y/edit?usp=sharing), then export it as CSV, name it something like `list.csv`, and place it in the project root or a subdirectory.
 
-By default, the converter will geocode rows that are missing either coordinates or an address. If every row already contains both, or if you want to forbid external geocoding, use:
+### 2. Convert the CSV
 
 ```bash
-bun run parseData.ts noodle2.csv --out public/data/noodle.json --no-geocode
+bun run convert:csv -- list.csv --out public/data/list.json
 ```
+
+If `--out` is omitted, the script writes a `.json` file next to the source CSV.
+
+By default, the converter enriches rows that are missing either coordinates or an address. To forbid external geocoding, use `--no-geocode`, then every row must already contain both coordinates and address data where required by the converter.
 
 ### Expected CSV columns
 
-- `店名`
-- `評級`
-- `價位`
-- `經緯度` or `地址` or both
-- Optional: `筆記`, `標籤`
+- Required: `店名`
+- Required: `評級`
+- Required: `價位`
+- Required: at least one of `經緯度` or `地址`
+- Optional: `筆記`
+- Optional: `標籤`
 
-If only one of `經緯度` or `地址` is provided, the converter uses ArcGIS geocoding to fill in the missing location data and writes provider attribution into the output dataset.
+## Project structure
+
+```text
+src/
+  App.svelte                  Main app and dataset loading
+  components/                 Popup and overlay UI
+  lib/restaurants.ts          Restaurant types and tier metadata
+  lib/map.ts                  Map defaults and tile provider config
+public/data/
+  *.json                      Restaurant datasets
+  restaurants.schema.json     Dataset schema
+parseData.ts                  CSV-to-JSON converter
+```

@@ -19,7 +19,7 @@ export const providers = {
         attribution: '&copy; <a href="https://opentopomap.org/copyright">OpenTopoMap</a> contributors',
         maxZoom: 19,
     },
-    // TODO: double check T&S on https://carto.com/basemaps
+    // Cannot use CartoDB since non-commercial use is limited to grantees
     /*
     CartoLight: {
         url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
@@ -28,8 +28,7 @@ export const providers = {
     },
     CartoDark: {
         url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        attribution:
-            '&copy; <a href="https://carto.com/attributions">CARTO</a> contributors',
+        attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a> contributors',
     }
     */
 };

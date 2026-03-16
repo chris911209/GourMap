@@ -1,0 +1,80 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://gourmap.local/data/restaurants.schema.json",
+    "title": "Restaurant Tier List",
+    "description": "Dataset for restaurant markers rendered by GourMap.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["items"],
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "JSON Schema reference used by editors and tooling."
+        },
+        "items": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "lat", "lng", "district", "tier", "priceBucket"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Display name of the restaurant."
+                    },
+                    "lat": {
+                        "type": "number",
+                        "minimum": -90,
+                        "maximum": 90,
+                        "description": "Latitude in decimal degrees."
+                    },
+                    "lng": {
+                        "type": "number",
+                        "minimum": -180,
+                        "maximum": 180,
+                        "description": "Longitude in decimal degrees."
+                    },
+                    "district": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Administrative district or area."
+                    },
+                    "tier": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Ordered ranking bucket; lower usually means more preferred."
+                    },
+                    "priceBucket": {
+                        "type": "integer",
+                        "multipleOf": 100,
+                        "minimum": 0,
+                        "description": "Approximate price bucket in 100-unit increments."
+                    },
+                    "address": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Street address."
+                    },
+                    "notes": {
+                        "type": "string",
+                        "description": "Free-form notes about the restaurant."
+                    },
+                    "plusCode": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Google Plus Code or equivalent location code."
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "description": "Optional list of tags or categories for the restaurant."
+                    }
+                }
+            }
+        }
+    }
+}

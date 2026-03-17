@@ -64,14 +64,21 @@
         selectedTag = "all";
         selectedTier = "all";
     }
+
+    function setSelectedTier(tier: string) {
+        selectedTier = selectedTier === tier ? "all" : tier;
+    }
 </script>
 
 <main class="app">
     <header class="page-header">
-        <h1>GourMap</h1>
+        <h1 class="site-title">
+            <img class="site-title__icon" src={`${import.meta.env.BASE_URL}favicon.svg`} alt="GourMap logo" />
+            <span>GourMap</span>
+            <small>台北餐廳排行</small>
+        </h1>
         <a class="source-link" href="https://github.com/Dogeon188/GourMap" target="_blank" rel="noreferrer">
-            <span class="material-symbols-outlined">code_xml</span>
-            Source code
+            <img class="source-link__icon" src={`${import.meta.env.BASE_URL}github.png`} alt="" aria-hidden="true" />
         </a>
     </header>
 
@@ -80,7 +87,6 @@
     {/if}
 
     <RestaurantMap restaurants={filteredRestaurants}>
-
         <OverlayPanel
             open={filterPanelOpen}
             onOpenChange={setFilterPanelOpen}
@@ -129,7 +135,7 @@
             </form>
         </OverlayPanel>
 
-        <LegendPanel open={legendOpen} onOpenChange={setLegendOpen} />
+        <LegendPanel open={legendOpen} onOpenChange={setLegendOpen} {selectedTier} onTierSelect={setSelectedTier} />
     </RestaurantMap>
 </main>
 
@@ -156,6 +162,18 @@
         }
     }
 
+    .site-title {
+        display: inline-flex;
+        align-items: center;
+        gap: clamp(0.5rem, 1.5vw, 0.85rem);
+    }
+
+    .site-title__icon {
+        width: clamp(2rem, 5vw, 3.25rem);
+        height: clamp(2rem, 5vw, 3.25rem);
+        flex-shrink: 0;
+    }
+
     .source-link {
         color: var(--accent);
         font-size: 0.95rem;
@@ -163,7 +181,15 @@
         text-decoration: none;
         white-space: nowrap;
         display: inline-flex;
+        align-items: center;
         gap: 0.25rem;
+    }
+
+    .source-link__icon {
+        width: 1.8rem;
+        height: 1.8rem;
+        object-fit: contain;
+        flex-shrink: 0;
     }
 
     .source-link:hover {

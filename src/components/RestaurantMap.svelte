@@ -45,7 +45,7 @@
                 color: "#fff",
                 weight: 1,
                 opacity: 1,
-                fillOpacity: 0.92,
+                fillOpacity: 0.7,
             })
                 .addTo(markerGroup)
                 .bindTooltip(`<b>T${shop.tier}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })

@@ -4,9 +4,9 @@
     --bg: #fff;
     --border: #e5e4e7;
     --code-bg: #f4f3ec;
-    --accent: rgba(33, 161, 37, 1);
-    --accent-bg: rgba(33, 161, 37, 0.1);
-    --accent-border: rgba(33, 161, 37, 0.5);
+    --accent: rgba(255, 72, 62, 1);
+    --accent-bg: rgba(255, 72, 62, 0.1);
+    --accent-border: rgba(255, 72, 62, 0.5);
     --social-bg: rgba(244, 243, 236, 0.5);
     --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -79,4 +79,11 @@ code {
     line-height: 135%;
     padding: 4px 8px;
     background: var(--code-bg);
+}
+
+small {
+    display: block;
+    font-size: 0.5em;
+    color: var(--text);
+    margin-top: 4px;
 }

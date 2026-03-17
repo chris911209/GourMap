@@ -5,9 +5,13 @@
     let {
         open = true,
         onOpenChange = () => {},
+        selectedTier = "all",
+        onTierSelect = () => {},
     }: {
         open?: boolean;
         onOpenChange?: (open: boolean) => void;
+        selectedTier?: string;
+        onTierSelect?: (tier: string) => void;
     } = $props();
 </script>
 
@@ -24,11 +28,18 @@
     <ul class="legend-list">
         {#each Object.entries(tierName) as [tier, label]}
             <li>
-                <span class="legend-label">
-                    <span class="legend-swatch" style={`background:${tierColor[Number(tier)]}`}></span>
-                    <span class="legend-tier">T{tier}</span>
-                </span>
-                <strong>{label}</strong>
+                <button
+                    class:active={selectedTier === tier}
+                    class="legend-button"
+                    type="button"
+                    onclick={() => onTierSelect(tier)}
+                >
+                    <span class="legend-label">
+                        <span class="legend-swatch" style={`background:${tierColor[Number(tier)]}`}></span>
+                        <span class="legend-tier">T{tier}</span>
+                    </span>
+                    <strong>{label}</strong>
+                </button>
             </li>
         {/each}
     </ul>
@@ -44,12 +55,41 @@
         font-size: 0.8rem;
 
         li {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-            padding: 0 0.8rem;
-            background: rgba(255, 255, 255, 0.72);
+            margin: 0;
+        }
+    }
+
+    .legend-button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.45rem 0.8rem;
+        border: none;
+        border-radius: 0.75rem;
+        background: rgba(255, 255, 255, 0.72);
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition:
+            background-color 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease;
+
+        &:hover {
+            background: color-mix(in srgb, var(--accent) 10%, white);
+        }
+        
+        &:active {
+            background: color-mix(in srgb, var(--accent) 18%, white);
+            color: var(--text-h);
+        }
+
+        &:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--accent) 35%, white);
+            outline-offset: 2px;
         }
     }
 

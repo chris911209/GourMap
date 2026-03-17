@@ -4,7 +4,7 @@ GourMap is a small Svelte 5 + Leaflet app for browsing a personal restaurant dat
 
 Inspired by [Taipei Burger Map](https://hsieh-george.github.io/taipei-burger-map/).
 
-[繁體中文說明](./README-tw.md)
+[繁體中文說明](./README-tw.md) [Live demo](https://dogeon188.github.io/GourMap/)
 
 ## What it does
 

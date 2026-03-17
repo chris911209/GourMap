@@ -146,7 +146,6 @@
         .overlay-panel {
             bottom: 1rem;
             left: 0.75rem;
-            width: min(calc(100% - 1.5rem), 22rem);
 
             &.right {
                 left: auto;

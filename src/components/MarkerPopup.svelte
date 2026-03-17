@@ -52,7 +52,7 @@
             )}
     >
         <span class="material-symbols-outlined">place</span>
-        <span>View on Google Maps</span>
+        <span>Google 地圖導航</span>
     </button>
 {/if}
 

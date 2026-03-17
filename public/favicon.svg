@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <title>Safari Compass Fork Spoon Logo</title>
+
+  <!-- White squircle background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0" y1="64" x2="0" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff483eff"/>
+      <stop offset="100%" stop-color="#5d150bff"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M128 64
+      C92 64 64 92 64 128
+      V384
+      C64 420 92 448 128 448
+      H384
+      C420 448 448 420 448 384
+      V128
+      C448 92 420 64 384 64
+      Z"
+    fill="url(#bgGradient)"
+    stroke="transparent"
+    stroke-width="10"
+    stroke-linejoin="round"
+  />
+
+  <g stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Outer compass ring -->
+    <circle cx="256" cy="256" r="168" stroke-width="12"/>
+    <circle cx="256" cy="256" r="146" stroke-width="4"/>
+
+    <!-- Cardinal ticks -->
+    <line x1="256" y1="67" x2="256" y2="108" stroke-width="8"/>
+    <line x1="256" y1="404" x2="256" y2="445" stroke-width="8"/>
+    <line x1="67" y1="256" x2="108" y2="256" stroke-width="8"/>
+    <line x1="404" y1="256" x2="445" y2="256" stroke-width="8"/>
+
+    <!-- Diagonal ticks -->
+    <line x1="122.36" y1="122.36" x2="147.82" y2="147.82" stroke-width="6"/>
+    <line x1="364.18" y1="364.18" x2="389.64" y2="389.64" stroke-width="6"/>
+    <line x1="389.64" y1="122.36" x2="364.18" y2="147.82" stroke-width="6"/>
+    <line x1="147.82" y1="364.18" x2="122.36" y2="389.64" stroke-width="6"/>
+
+    <!-- Inner compass diamond -->
+    <path d="M256 148 L286 226 L364 256 L286 286 L256 364 L226 286 L148 256 L226 226 Z" stroke-width="6"/>
+
+    <!-- Crossed spoon -->
+    <g transform="rotate(-45 256 256)">
+      <ellipse cx="256" cy="180" rx="18" ry="26" stroke-width="6"/>
+      <line x1="256" y1="204" x2="256" y2="332" stroke-width="10"/>
+      <path d="M246 332 Q256 352 266 332" stroke-width="6"/>
+    </g>
+
+    <!-- Crossed fork -->
+    <g transform="rotate(45 256 256)">
+      <line x1="256" y1="184" x2="256" y2="332" stroke-width="10"/>
+      <line x1="244" y1="158" x2="244" y2="196" stroke-width="5"/>
+      <line x1="252" y1="154" x2="252" y2="196" stroke-width="5"/>
+      <line x1="260" y1="154" x2="260" y2="196" stroke-width="5"/>
+      <line x1="268" y1="158" x2="268" y2="196" stroke-width="5"/>
+      <line x1="244" y1="196" x2="268" y2="196" stroke-width="5"/>
+      <path d="M246 332 Q256 352 266 332" stroke-width="6"/>
+    </g>
+
+    <!-- Center hub -->
+    <circle cx="256" cy="256" r="16" stroke-width="6"/>
+  </g>
+</svg>

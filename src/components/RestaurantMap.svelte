@@ -1,16 +1,18 @@
 <script lang="ts">
     import L from "leaflet";
     import type { Snippet } from "svelte";
-    import { initView, initZoom, provider } from "../lib/map";
+    import { fallbackView, fallbackZoom, provider } from "../lib/map";
     import { mountPopupContent, tierColor, type Restaurant } from "../lib/restaurants";
 
     let {
         restaurants = [],
         geocodeAttribution = null,
+        defaultBounds = null,
         children,
     }: {
         restaurants: Restaurant[];
         geocodeAttribution?: string | null;
+        defaultBounds?: [[number, number], [number, number]] | null;
         children?: Snippet;
     } = $props();
 
@@ -22,7 +24,7 @@
     const fitMaxZoom = 16;
 
     $effect(() => {
-        const mapInstance = L.map(mapElement).setView(initView, initZoom);
+        const mapInstance = L.map(mapElement).setView(fallbackView, fallbackZoom);
 
         map = mapInstance;
 
@@ -62,7 +64,7 @@
             L.circleMarker([shop.lat, shop.lng], {
                 radius: 10,
                 fillColor: tierColor[shop.tier],
-                color: "#fff",
+                color: "#000",
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.7,
@@ -73,7 +75,14 @@
         }
 
         if (restaurants.length === 0) {
-            map.setView(initView, initZoom);
+            if (defaultBounds) {
+                map.fitBounds(defaultBounds, {
+                    padding: fitPadding,
+                    maxZoom: fitMaxZoom,
+                });
+            } else {
+                map.setView(fallbackView, fallbackZoom);
+            }
             return;
         }
 

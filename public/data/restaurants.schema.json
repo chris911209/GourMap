@@ -5,7 +5,7 @@
     "description": "Dataset for restaurant markers rendered by GourMap.",
     "type": "object",
     "additionalProperties": false,
-    "required": ["items"],
+    "required": ["items", "view"],
     "properties": {
         "$schema": {
             "type": "string",
@@ -19,6 +19,27 @@
                     "type": "string",
                     "minLength": 1,
                     "description": "Attribution text for geocoding or location enrichment providers."
+                }
+            }
+        },
+        "view": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["bounds"],
+            "properties": {
+                "bounds": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "description": "Default map bounds for this dataset as southwest and northeast lat/lng pairs.",
+                    "items": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": {
+                            "type": "number"
+                        }
+                    }
                 }
             }
         },

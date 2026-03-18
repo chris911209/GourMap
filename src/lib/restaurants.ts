@@ -25,6 +25,9 @@ export type RestaurantDataset = {
     attribution?: {
         geocoding?: string;
     };
+    view?: {
+        bounds?: [[number, number], [number, number]];
+    };
     items: Restaurant[];
 };
 

@@ -11,6 +11,7 @@
     let dataSources = $state<DataSource[]>([]);
     let selectedSourcePath = $state("");
     let geocodeAttribution = $state<string | null>(null);
+    let defaultBounds = $state<[[number, number], [number, number]] | null>(null);
     let allRestaurants = $state<Restaurant[]>([]);
     let selectedDistrict = $state("all");
     let selectedTag = $state("all");
@@ -40,6 +41,7 @@
         if (!selectedSourcePath) {
             allRestaurants = [];
             geocodeAttribution = null;
+            defaultBounds = null;
             return;
         }
 
@@ -77,6 +79,7 @@
             dataSources = [];
             selectedSourcePath = "";
             geocodeAttribution = null;
+            defaultBounds = null;
             allRestaurants = [];
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
@@ -87,10 +90,12 @@
             const loadedRestaurants = await fetchRestaurants(path);
             allRestaurants = loadedRestaurants.items;
             geocodeAttribution = loadedRestaurants.geocodeAttribution;
+            defaultBounds = loadedRestaurants.defaultBounds;
             loadError = null;
         } catch (error) {
             allRestaurants = [];
             geocodeAttribution = null;
+            defaultBounds = null;
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
     }
@@ -132,7 +137,7 @@
         <p class="load-error">{loadError}</p>
     {/if}
 
-    <RestaurantMap restaurants={filteredRestaurants} {geocodeAttribution}>
+    <RestaurantMap restaurants={filteredRestaurants} {geocodeAttribution} {defaultBounds}>
         <OverlayPanel
             open={filterPanelOpen}
             onOpenChange={setFilterPanelOpen}

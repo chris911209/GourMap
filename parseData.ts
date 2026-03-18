@@ -24,8 +24,11 @@ type Restaurant = {
 
 type RestaurantDataset = {
     $schema: string;
-    attribution: {
-        geocoding: string;
+    attribution?: {
+        geocoding?: string;
+    };
+    view: {
+        bounds: [[number, number], [number, number]];
     };
     items: Restaurant[];
 };
@@ -68,6 +71,7 @@ async function main() {
     }
 
     const items: Restaurant[] = [];
+    let usedGeocoding = false;
     const progressBar = new cliProgress.SingleBar(
         {
             format: "Converting [{bar}] {percentage}% | {value}/{total} | {name}",
@@ -87,6 +91,7 @@ async function main() {
             });
 
             const restaurant = await buildRestaurant(row, options.geocode);
+            usedGeocoding ||= options.geocode && rowNeedsLookup(row);
 
             items.push(restaurant);
             progressBar.update(index + 1, {
@@ -103,8 +108,15 @@ async function main() {
 
     const dataset: RestaurantDataset = {
         $schema: options.schemaPath,
-        attribution: {
-            geocoding: GEOCODING_ATTRIBUTION,
+        ...(usedGeocoding
+            ? {
+                  attribution: {
+                      geocoding: GEOCODING_ATTRIBUTION,
+                  },
+              }
+            : {}),
+        view: {
+            bounds: computeBounds(items),
         },
         items,
     };
@@ -293,6 +305,16 @@ function parseTags(value?: string): string[] {
         .split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
+}
+
+function computeBounds(items: Restaurant[]): [[number, number], [number, number]] {
+    const lats = items.map((item) => item.lat);
+    const lngs = items.map((item) => item.lng);
+
+    return [
+        [Math.min(...lats), Math.min(...lngs)],
+        [Math.max(...lats), Math.max(...lngs)],
+    ];
 }
 
 async function reverseGeocode(lat: number, lng: number): Promise<GeocodeResult> {

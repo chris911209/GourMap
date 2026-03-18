@@ -8,6 +8,7 @@ export type DataSource = {
 export type LoadedRestaurants = {
     items: Restaurant[];
     geocodeAttribution: string | null;
+    defaultBounds: [[number, number], [number, number]] | null;
 };
 
 const sourceListUrl = `${import.meta.env.BASE_URL}data/.sourcelist.json`;
@@ -37,5 +38,6 @@ export async function loadRestaurants(path: string): Promise<LoadedRestaurants> 
     return {
         items: dataset.items,
         geocodeAttribution: dataset.attribution?.geocoding ?? null,
+        defaultBounds: dataset.view?.bounds ?? null,
     };
 }

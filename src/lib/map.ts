@@ -1,8 +1,8 @@
-/** Initial view of the map (latitude, longitude), currently set to Taipei, Taiwan */
-export const initView: L.LatLngExpression = [25.0478, 121.5319];
+/** Fallback view used before dataset-specific bounds are available. */
+export const fallbackView: L.LatLngExpression = [25.0478, 121.5319];
 
-/** Initial zoom level of the map. Higher values zoom in closer. */
-export const initZoom = 12;
+/** Fallback zoom used before dataset-specific bounds are available. */
+export const fallbackZoom = 12;
 
 /**
  * Map tile providers. Each provider has a URL template and attribution text.

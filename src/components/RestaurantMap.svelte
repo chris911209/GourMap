@@ -27,6 +27,7 @@
         const mapInstance = L.map(mapElement).setView(fallbackView, fallbackZoom);
 
         map = mapInstance;
+        markerGroup = L.layerGroup().addTo(mapInstance);
 
         return () => {
             baseLayer?.remove();
@@ -57,10 +58,20 @@
             return;
         }
 
-        markerGroup?.remove();
-        markerGroup = L.layerGroup().addTo(map);
+        const group = markerGroup;
+        if (!group) {
+            return;
+        }
+
+        group.clearLayers();
 
         for (const shop of restaurants) {
+            const popupContent = mountPopupContent(shop);
+
+            const destroyPopupContent = () => {
+                popupContent.destroy();
+            };
+
             L.circleMarker([shop.lat, shop.lng], {
                 radius: 10,
                 fillColor: tierColor[shop.tier],
@@ -69,9 +80,14 @@
                 opacity: 1,
                 fillOpacity: 0.7,
             })
-                .addTo(markerGroup)
+                .addTo(group)
                 .bindTooltip(`<b>T${shop.tier}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })
-                .bindPopup(mountPopupContent(shop));
+                .bindPopup(popupContent.element)
+                .on({
+                    popupopen: popupContent.mount,
+                    popupclose: destroyPopupContent,
+                    remove: destroyPopupContent,
+                });
         }
 
         if (restaurants.length === 0) {

@@ -1,4 +1,4 @@
-import { mount } from "svelte";
+import { mount, unmount } from "svelte";
 import MarkerPopup from "../components/MarkerPopup.svelte";
 
 export type District = string;
@@ -31,15 +31,46 @@ export type RestaurantDataset = {
     items: Restaurant[];
 };
 
-export function mountPopupContent(shop: Restaurant): HTMLDivElement {
+export type PopupContentHandle = {
+    element: HTMLDivElement;
+    mount: () => void;
+    destroy: () => void;
+};
+
+export function mountPopupContent(shop: Restaurant): PopupContentHandle {
     let container = document.createElement("div");
-    mount(MarkerPopup, {
-        props: {
-            restaurant: shop,
-        },
-        target: container,
-    });
-    return container;
+    let component: Record<string, any> | null = null;
+
+    function mountContent() {
+        if (component) {
+            return;
+        }
+
+        component = mount(MarkerPopup, {
+            props: {
+                restaurant: shop,
+            },
+            target: container,
+        });
+    }
+
+    function destroyContent() {
+        if (!component) {
+            return;
+        }
+
+        const mountedComponent = component;
+        component = null;
+        void unmount(mountedComponent);
+    }
+
+    mountContent();
+
+    return {
+        element: container,
+        mount: mountContent,
+        destroy: destroyContent,
+    };
 }
 
 export const tierName: Record<Tier, string> = {

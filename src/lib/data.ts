@@ -1,4 +1,5 @@
-import type { Restaurant, RestaurantDataset } from "./restaurants";
+import { z } from "zod";
+import type { Restaurant } from "./restaurants";
 
 export type DataSource = {
     path: string;
@@ -13,6 +14,46 @@ export type LoadedRestaurants = {
 
 const sourceListUrl = `${import.meta.env.BASE_URL}data/.sourcelist.json`;
 
+const dataSourceSchema = z.object({
+    path: z.string(),
+    name: z.string(),
+});
+
+const coordinatePairSchema = z.tuple([z.number().finite(), z.number().finite()]);
+
+const restaurantSchema = z.object({
+    name: z.string(),
+    lat: z.number(),
+    lng: z.number(),
+    district: z.string(),
+    tier: z.number(),
+    priceBucket: z.number(),
+    address: z.string().optional(),
+    notes: z.string().optional(),
+    plusCode: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+});
+
+const restaurantDatasetSchema = z.object({
+    attribution: z
+        .object({
+            geocoding: z.string().optional(),
+        })
+        .optional(),
+    view: z
+        .object({
+            bounds: z.tuple([coordinatePairSchema, coordinatePairSchema]).optional(),
+        })
+        .optional(),
+    items: z.array(restaurantSchema),
+});
+
+function validationError(error: z.ZodError): Error {
+    const issue = error.issues[0];
+    const path = issue?.path.length ? issue.path.join(".") : "payload";
+    return new Error(`Invalid data payload: ${path} ${issue?.message ?? "is invalid."}`);
+}
+
 function getDataUrl(path: string) {
     return `${import.meta.env.BASE_URL}data/${path}`;
 }
@@ -24,7 +65,13 @@ export async function loadSourceList(): Promise<DataSource[]> {
         throw new Error(`Failed to fetch .sourcelist.json: ${response.status} ${response.statusText}`);
     }
 
-    return (await response.json()) as DataSource[];
+    const parsed = dataSourceSchema.array().safeParse(await response.json());
+
+    if (!parsed.success) {
+        throw validationError(parsed.error);
+    }
+
+    return parsed.data;
 }
 
 export async function loadRestaurants(path: string): Promise<LoadedRestaurants> {
@@ -34,9 +81,15 @@ export async function loadRestaurants(path: string): Promise<LoadedRestaurants> 
         throw new Error(`Failed to fetch ${path}: ${response.status} ${response.statusText}`);
     }
 
-    const dataset = (await response.json()) as RestaurantDataset;
+    const parsed = restaurantDatasetSchema.safeParse(await response.json());
+
+    if (!parsed.success) {
+        throw validationError(parsed.error);
+    }
+
+    const dataset = parsed.data;
     return {
-        items: dataset.items,
+        items: dataset.items as Restaurant[],
         geocodeAttribution: dataset.attribution?.geocoding ?? null,
         defaultBounds: dataset.view?.bounds ?? null,
     };

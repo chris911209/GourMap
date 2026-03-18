@@ -18,6 +18,8 @@
     let selectedTier = $state("all");
     let selectedMinPrice = $state("all");
     let selectedMaxPrice = $state("all");
+    let latestInitializationRequestId = 0;
+    let latestSourceRequestId = 0;
 
     function setLegendOpen(open: boolean) {
         legendOpen = open;
@@ -34,22 +36,6 @@
             legendOpen = false;
         }
     }
-
-    $effect(() => {
-        initializeSources();
-    });
-
-    $effect(() => {
-        if (!selectedSourcePath) {
-            allRestaurants = [];
-            geocodeAttribution = null;
-            defaultBounds = null;
-            return;
-        }
-
-        resetFilters();
-        loadRestaurants(selectedSourcePath);
-    });
 
     let districtOptions = $derived.by(() => getUniqueOptions(allRestaurants.map((shop) => shop.district)));
     let tagOptions = $derived.by(() => getUniqueOptions(allRestaurants.flatMap((shop) => shop.tags ?? [])));
@@ -74,44 +60,74 @@
         document.title = `${selectedSourceName}餐廳排行地圖`;
     });
 
-    $effect(() => {
-        if (selectedMinPrice === "all" || selectedMaxPrice === "all") {
-            return;
-        }
-
-        if (Number(selectedMinPrice) > Number(selectedMaxPrice)) {
-            selectedMaxPrice = selectedMinPrice;
-        }
-    });
-
     async function initializeSources() {
+        const requestId = ++latestInitializationRequestId;
+
         try {
             const sources = await loadSourceList();
+            if (requestId !== latestInitializationRequestId) {
+                return;
+            }
+
             dataSources = sources;
-            selectedSourcePath = sources[0]?.path ?? "";
+            const defaultSourcePath = sources[0]?.path ?? "";
             loadError = null;
+
+            if (!defaultSourcePath) {
+                selectedSourcePath = "";
+                clearRestaurantData();
+                return;
+            }
+
+            await setSelectedSource(defaultSourcePath);
         } catch (error) {
+            if (requestId !== latestInitializationRequestId) {
+                return;
+            }
+
             dataSources = [];
             selectedSourcePath = "";
-            geocodeAttribution = null;
-            defaultBounds = null;
-            allRestaurants = [];
+            clearRestaurantData();
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
     }
 
-    async function loadRestaurants(path: string) {
+    async function setSelectedSource(path: string, shouldResetFilters = false) {
+        const requestId = ++latestSourceRequestId;
+
+        selectedSourcePath = path;
+
+        if (shouldResetFilters) {
+            resetFilters();
+        }
+
+        if (!path) {
+            if (requestId !== latestSourceRequestId) {
+                return;
+            }
+
+            clearRestaurantData();
+            loadError = null;
+            return;
+        }
+
         try {
             const loadedRestaurants = await fetchRestaurants(path);
+            if (requestId !== latestSourceRequestId) {
+                return;
+            }
+
             // Note: Sort by tier in descending order so that higher-tier shops are rendered on top of lower-tier ones.
             allRestaurants = loadedRestaurants.items.sort((a, b) => b.tier - a.tier);
             geocodeAttribution = loadedRestaurants.geocodeAttribution;
             defaultBounds = loadedRestaurants.defaultBounds;
             loadError = null;
         } catch (error) {
-            allRestaurants = [];
-            geocodeAttribution = null;
-            defaultBounds = null;
+            if (requestId !== latestSourceRequestId) {
+                return;
+            }
+
+            clearRestaurantData();
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
     }
@@ -144,9 +160,37 @@
         selectedMaxPrice = "all";
     }
 
+    function clearRestaurantData() {
+        allRestaurants = [];
+        geocodeAttribution = null;
+        defaultBounds = null;
+    }
+
+    async function handleSourceChange(path: string) {
+        await setSelectedSource(path, true);
+    }
+
+    function handleMinPriceChange(value: string) {
+        selectedMinPrice = value;
+
+        if (selectedMaxPrice !== "all" && value !== "all" && Number(value) > Number(selectedMaxPrice)) {
+            selectedMaxPrice = value;
+        }
+    }
+
+    function handleMaxPriceChange(value: string) {
+        selectedMaxPrice = value;
+
+        if (selectedMinPrice !== "all" && value !== "all" && Number(selectedMinPrice) > Number(value)) {
+            selectedMinPrice = value;
+        }
+    }
+
     function setSelectedTier(tier: string) {
         selectedTier = selectedTier === tier ? "all" : tier;
     }
+
+    void initializeSources();
 </script>
 
 <main class="app">
@@ -158,8 +202,12 @@
         <div class="header-controls">
             <label class="source-picker">
                 <span class="source-picker__label">資料集</span>
-                <select bind:value={selectedSourcePath} aria-label="選擇資料來源">
-                    {#each dataSources as source}
+                <select
+                    value={selectedSourcePath}
+                    aria-label="選擇資料來源"
+                    onchange={(event) => handleSourceChange((event.currentTarget as HTMLSelectElement).value)}
+                >
+                    {#each dataSources as source (source.path)}
                         <option value={source.path}>{source.name}</option>
                     {/each}
                 </select>
@@ -192,7 +240,7 @@
                     <span class="filter-label">行政區</span>
                     <select bind:value={selectedDistrict}>
                         <option value="all">全部</option>
-                        {#each districtOptions as district}
+                        {#each districtOptions as district (district)}
                             <option value={district}>{district}</option>
                         {/each}
                     </select>
@@ -202,7 +250,7 @@
                     <span class="filter-label">標籤</span>
                     <select bind:value={selectedTag}>
                         <option value="all">全部</option>
-                        {#each tagOptions as tag}
+                        {#each tagOptions as tag (tag)}
                             <option value={tag}>{tag}</option>
                         {/each}
                     </select>
@@ -212,7 +260,7 @@
                     <span class="filter-label">Tier</span>
                     <select bind:value={selectedTier}>
                         <option value="all">全部</option>
-                        {#each tierOptions as tier}
+                        {#each tierOptions as tier (tier)}
                             <option value={String(tier)}>T{tier} {tierName[tier]}</option>
                         {/each}
                     </select>
@@ -221,16 +269,22 @@
                 <div class="filter-field">
                     <span class="filter-label">價格區間</span>
                     <div class="price-range-fields">
-                        <select bind:value={selectedMinPrice}>
+                        <select
+                            value={selectedMinPrice}
+                            onchange={(event) => handleMinPriceChange((event.currentTarget as HTMLSelectElement).value)}
+                        >
                             <option value="all">最低不限</option>
-                            {#each priceOptions as price}
+                            {#each priceOptions as price (price)}
                                 <option value={String(price)}>${price}</option>
                             {/each}
                         </select>
                         <span class="price-range-separator">至</span>
-                        <select bind:value={selectedMaxPrice}>
+                        <select
+                            value={selectedMaxPrice}
+                            onchange={(event) => handleMaxPriceChange((event.currentTarget as HTMLSelectElement).value)}
+                        >
                             <option value="all">最高不限</option>
-                            {#each priceOptions as price}
+                            {#each priceOptions as price (price)}
                                 <option value={String(price)}>${price}</option>
                             {/each}
                         </select>

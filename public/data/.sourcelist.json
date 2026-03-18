@@ -1,1 +1,4 @@
-[{ "path": "taipei.json", "name": "台北" }]
+[
+    { "path": "taipei.json", "name": "台北" },
+    { "path": "hsinchu.json", "name": "新竹" }
+]

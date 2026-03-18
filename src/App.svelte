@@ -50,6 +50,9 @@
     let districtOptions = $derived.by(() => getUniqueOptions(allRestaurants.map((shop) => shop.district)));
     let tagOptions = $derived.by(() => getUniqueOptions(allRestaurants.flatMap((shop) => shop.tags ?? [])));
     let tierOptions = $derived.by(() => [...new Set(allRestaurants.map((shop) => shop.tier))].sort((a, b) => a - b));
+    let selectedSourceName = $derived.by(
+        () => dataSources.find((source) => source.path === selectedSourcePath)?.name ?? "GourMap",
+    );
     let filteredRestaurants = $derived.by(() =>
         allRestaurants.filter((shop) => {
             const districtMatches = selectedDistrict === "all" || shop.district === selectedDistrict;
@@ -59,6 +62,10 @@
             return districtMatches && tagMatches && tierMatches;
         }),
     );
+
+    $effect(() => {
+        document.title = `${selectedSourceName}餐廳排行地圖`;
+    });
 
     async function initializeSources() {
         try {

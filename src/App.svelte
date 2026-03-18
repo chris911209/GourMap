@@ -88,7 +88,8 @@
     async function loadRestaurants(path: string) {
         try {
             const loadedRestaurants = await fetchRestaurants(path);
-            allRestaurants = loadedRestaurants.items;
+            // Note: Sort by tier in descending order so that higher-tier shops are rendered on top of lower-tier ones.
+            allRestaurants = loadedRestaurants.items.sort((a, b) => b.tier - a.tier);
             geocodeAttribution = loadedRestaurants.geocodeAttribution;
             defaultBounds = loadedRestaurants.defaultBounds;
             loadError = null;

@@ -55,9 +55,9 @@ export const tierName: Record<Tier, string> = {
 export const tierColor: Record<Tier, string> = {
     0: "#d73027",
     1: "#f46d43",
-    2: "#fdae61",
-    3: "#fee08b",
-    4: "#d9ef8b",
-    5: "#66bd63",
-    6: "#1a9850",
+    2: "#fee08b",
+    3: "#66bd63",
+    4: "#1a6698",
+    5: "#542788",
+    6: "#000000",
 };

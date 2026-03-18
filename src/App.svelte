@@ -16,6 +16,8 @@
     let selectedDistrict = $state("all");
     let selectedTag = $state("all");
     let selectedTier = $state("all");
+    let selectedMinPrice = $state("all");
+    let selectedMaxPrice = $state("all");
 
     function setLegendOpen(open: boolean) {
         legendOpen = open;
@@ -52,6 +54,7 @@
     let districtOptions = $derived.by(() => getUniqueOptions(allRestaurants.map((shop) => shop.district)));
     let tagOptions = $derived.by(() => getUniqueOptions(allRestaurants.flatMap((shop) => shop.tags ?? [])));
     let tierOptions = $derived.by(() => [...new Set(allRestaurants.map((shop) => shop.tier))].sort((a, b) => a - b));
+    let priceOptions = $derived.by(() => getPriceOptions(allRestaurants.map((shop) => shop.priceBucket)));
     let selectedSourceName = $derived.by(
         () => dataSources.find((source) => source.path === selectedSourcePath)?.name ?? "GourMap",
     );
@@ -60,13 +63,25 @@
             const districtMatches = selectedDistrict === "all" || shop.district === selectedDistrict;
             const tagMatches = selectedTag === "all" || (shop.tags ?? []).includes(selectedTag);
             const tierMatches = selectedTier === "all" || String(shop.tier) === selectedTier;
+            const minPriceMatches = selectedMinPrice === "all" || shop.priceBucket >= Number(selectedMinPrice);
+            const maxPriceMatches = selectedMaxPrice === "all" || shop.priceBucket <= Number(selectedMaxPrice);
 
-            return districtMatches && tagMatches && tierMatches;
+            return districtMatches && tagMatches && tierMatches && minPriceMatches && maxPriceMatches;
         }),
     );
 
     $effect(() => {
         document.title = `${selectedSourceName}餐廳排行地圖`;
+    });
+
+    $effect(() => {
+        if (selectedMinPrice === "all" || selectedMaxPrice === "all") {
+            return;
+        }
+
+        if (Number(selectedMinPrice) > Number(selectedMaxPrice)) {
+            selectedMaxPrice = selectedMinPrice;
+        }
     });
 
     async function initializeSources() {
@@ -105,10 +120,28 @@
         return [...new Set(values)].sort((left, right) => left.localeCompare(right, "zh-Hant"));
     }
 
+    function getPriceOptions(values: number[]) {
+        if (values.length === 0) {
+            return [];
+        }
+
+        const minPrice = Math.floor(Math.min(...values) / 100) * 100;
+        const maxPrice = Math.ceil(Math.max(...values) / 100) * 100;
+        let options: number[] = [];
+
+        for (let price = minPrice; price <= maxPrice; price += 100) {
+            options.push(price);
+        }
+
+        return options;
+    }
+
     function resetFilters() {
         selectedDistrict = "all";
         selectedTag = "all";
         selectedTier = "all";
+        selectedMinPrice = "all";
+        selectedMaxPrice = "all";
     }
 
     function setSelectedTier(tier: string) {
@@ -184,6 +217,25 @@
                         {/each}
                     </select>
                 </label>
+
+                <div class="filter-field">
+                    <span class="filter-label">價格區間</span>
+                    <div class="price-range-fields">
+                        <select bind:value={selectedMinPrice}>
+                            <option value="all">最低不限</option>
+                            {#each priceOptions as price}
+                                <option value={String(price)}>${price}</option>
+                            {/each}
+                        </select>
+                        <span class="price-range-separator">至</span>
+                        <select bind:value={selectedMaxPrice}>
+                            <option value="all">最高不限</option>
+                            {#each priceOptions as price}
+                                <option value={String(price)}>${price}</option>
+                            {/each}
+                        </select>
+                    </div>
+                </div>
             </form>
         </OverlayPanel>
 
@@ -344,5 +396,21 @@
     .filter-field select:focus {
         outline: 2px solid color-mix(in srgb, var(--accent) 35%, white);
         outline-offset: 2px;
+    }
+
+    .price-range-fields {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .price-range-fields select {
+        min-width: 0;
+    }
+
+    .price-range-separator {
+        font-size: 0.85rem;
+        color: var(--text);
     }
 </style>

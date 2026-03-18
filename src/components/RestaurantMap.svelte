@@ -1,33 +1,53 @@
 <script lang="ts">
     import L from "leaflet";
     import type { Snippet } from "svelte";
-    import { geocodeAttribution, initView, initZoom, provider } from "../lib/map";
+    import { initView, initZoom, provider } from "../lib/map";
     import { mountPopupContent, tierColor, type Restaurant } from "../lib/restaurants";
 
-    let { restaurants = [], children }: { restaurants: Restaurant[]; children?: Snippet } = $props();
+    let {
+        restaurants = [],
+        geocodeAttribution = null,
+        children,
+    }: {
+        restaurants: Restaurant[];
+        geocodeAttribution?: string | null;
+        children?: Snippet;
+    } = $props();
 
     let mapElement: HTMLDivElement;
     let map: L.Map | null = null;
     let markerGroup: L.LayerGroup | null = null;
+    let baseLayer: L.TileLayer | null = null;
     const fitPadding = L.point(48, 48);
     const fitMaxZoom = 16;
 
     $effect(() => {
         const mapInstance = L.map(mapElement).setView(initView, initZoom);
 
-        L.tileLayer(provider.url, {
-            maxZoom: provider.maxZoom,
-            attribution: provider.attribution + " | " + geocodeAttribution,
-        }).addTo(mapInstance);
-
         map = mapInstance;
 
         return () => {
+            baseLayer?.remove();
+            baseLayer = null;
             markerGroup?.remove();
             markerGroup = null;
             map = null;
             mapInstance.remove();
         };
+    });
+
+    $effect(() => {
+        if (!map) {
+            return;
+        }
+
+        baseLayer?.remove();
+        baseLayer = L.tileLayer(provider.url, {
+            maxZoom: provider.maxZoom,
+            attribution: geocodeAttribution
+                ? `${provider.attribution} | ${geocodeAttribution}`
+                : provider.attribution,
+        }).addTo(map);
     });
 
     $effect(() => {

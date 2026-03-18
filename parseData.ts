@@ -1,4 +1,4 @@
-import { geocode, reverseGeocode as esriReverseGeocode } from "@esri/arcgis-rest-geocoding";
+import { reverseGeocode as esriReverseGeocode, geocode } from "@esri/arcgis-rest-geocoding";
 import cliProgress from "cli-progress";
 import { parse } from "csv/sync";
 import { readFile, writeFile } from "node:fs/promises";
@@ -46,7 +46,7 @@ type CliOptions = {
 };
 
 const DEFAULT_SCHEMA_PATH = "./restaurants.schema.json";
-const GEOCODING_ATTRIBUTION = "Location enrichment uses Esri's ArcGIS World Geocoding Service. Powered by Esri.";
+const GEOCODING_ATTRIBUTION = `Powered by <a href="https://developers.arcgis.com/documentation/mapping-and-location-services/geocoding/" target="_blank" rel="noopener noreferrer">Esri</a>`;
 
 const csvRowSchema = z.record(z.string(), z.string());
 const coordinateSchema = z.tuple([z.number().finite(), z.number().finite()]);

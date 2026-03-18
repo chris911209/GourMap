@@ -43,6 +43,11 @@
             </li>
         {/each}
     </ul>
+
+    <a class="legend-source-link" href="https://github.com/Dogeon188/GourMap" target="_blank" rel="noreferrer">
+        <img class="legend-source-link__icon" src={`${import.meta.env.BASE_URL}github.png`} alt="" aria-hidden="true" />
+        <span>Source code</span>
+    </a>
 </OverlayPanel>
 
 <style lang="scss">
@@ -82,7 +87,7 @@
             background: color-mix(in srgb, var(--accent) 10%, white);
         }
         
-        &:active {
+        &.active {
             background: color-mix(in srgb, var(--accent) 18%, white);
             color: var(--text-h);
         }
@@ -110,5 +115,27 @@
     .legend-tier {
         font-size: 0.8rem;
         color: var(--text);
+    }
+
+    .legend-source-link {
+        margin-top: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .legend-source-link:hover {
+        text-decoration: underline;
+    }
+
+    .legend-source-link__icon {
+        width: 1rem;
+        height: 1rem;
+        object-fit: contain;
+        flex-shrink: 0;
     }
 </style>

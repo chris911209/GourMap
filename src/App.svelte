@@ -2,12 +2,15 @@
     import LegendPanel from "./components/LegendPanel.svelte";
     import OverlayPanel from "./components/OverlayPanel.svelte";
     import RestaurantMap from "./components/RestaurantMap.svelte";
-    import { loadRestaurants as fetchRestaurants } from "./lib/data";
+    import { loadRestaurants as fetchRestaurants, loadSourceList, type DataSource } from "./lib/data";
     import { tierName, type Restaurant } from "./lib/restaurants";
 
     let loadError = $state<string | null>(null);
     let legendOpen = $state(false);
     let filterPanelOpen = $state(false);
+    let dataSources = $state<DataSource[]>([]);
+    let selectedSourcePath = $state("");
+    let geocodeAttribution = $state<string | null>(null);
     let allRestaurants = $state<Restaurant[]>([]);
     let selectedDistrict = $state("all");
     let selectedTag = $state("all");
@@ -30,7 +33,18 @@
     }
 
     $effect(() => {
-        loadRestaurants();
+        initializeSources();
+    });
+
+    $effect(() => {
+        if (!selectedSourcePath) {
+            allRestaurants = [];
+            geocodeAttribution = null;
+            return;
+        }
+
+        resetFilters();
+        loadRestaurants(selectedSourcePath);
     });
 
     let districtOptions = $derived.by(() => getUniqueOptions(allRestaurants.map((shop) => shop.district)));
@@ -46,11 +60,30 @@
         }),
     );
 
-    async function loadRestaurants() {
+    async function initializeSources() {
         try {
-            allRestaurants = await fetchRestaurants();
+            const sources = await loadSourceList();
+            dataSources = sources;
+            selectedSourcePath = sources[0]?.path ?? "";
             loadError = null;
         } catch (error) {
+            dataSources = [];
+            selectedSourcePath = "";
+            geocodeAttribution = null;
+            allRestaurants = [];
+            loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
+        }
+    }
+
+    async function loadRestaurants(path: string) {
+        try {
+            const loadedRestaurants = await fetchRestaurants(path);
+            allRestaurants = loadedRestaurants.items;
+            geocodeAttribution = loadedRestaurants.geocodeAttribution;
+            loadError = null;
+        } catch (error) {
+            allRestaurants = [];
+            geocodeAttribution = null;
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
     }
@@ -75,18 +108,24 @@
         <h1 class="site-title">
             <img class="site-title__icon" src={`${import.meta.env.BASE_URL}favicon.svg`} alt="GourMap logo" />
             <span>GourMap</span>
-            <small>台北餐廳排行</small>
         </h1>
-        <a class="source-link" href="https://github.com/Dogeon188/GourMap" target="_blank" rel="noreferrer">
-            <img class="source-link__icon" src={`${import.meta.env.BASE_URL}github.png`} alt="" aria-hidden="true" />
-        </a>
+        <div class="header-controls">
+            <label class="source-picker">
+                <span class="source-picker__label">資料集</span>
+                <select bind:value={selectedSourcePath} aria-label="選擇資料來源">
+                    {#each dataSources as source}
+                        <option value={source.path}>{source.name}</option>
+                    {/each}
+                </select>
+            </label>
+        </div>
     </header>
 
     {#if loadError}
         <p class="load-error">{loadError}</p>
     {/if}
 
-    <RestaurantMap restaurants={filteredRestaurants}>
+    <RestaurantMap restaurants={filteredRestaurants} {geocodeAttribution}>
         <OverlayPanel
             open={filterPanelOpen}
             onOpenChange={setFilterPanelOpen}
@@ -166,6 +205,11 @@
         display: inline-flex;
         align-items: center;
         gap: clamp(0.5rem, 1.5vw, 0.85rem);
+        min-width: 0;
+
+        span {
+            white-space: nowrap;
+        }
     }
 
     .site-title__icon {
@@ -174,26 +218,56 @@
         flex-shrink: 0;
     }
 
-    .source-link {
-        color: var(--accent);
-        font-size: 0.95rem;
-        font-weight: 700;
-        text-decoration: none;
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
+    .header-controls {
+        flex: 1 1 50%;
+        display: flex;
+        justify-content: flex-end;
+        min-width: 0;
+    }
+
+    .source-picker {
+        display: grid;
         gap: 0.25rem;
+        justify-items: start;
+        width: min(100%, 18rem);
+        min-width: 0;
     }
 
-    .source-link__icon {
-        width: 1.8rem;
-        height: 1.8rem;
-        object-fit: contain;
-        flex-shrink: 0;
+    .source-picker__label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--text);
     }
 
-    .source-link:hover {
-        text-decoration: underline;
+    .source-picker select {
+        width: 100%;
+        min-width: 0;
+        padding: 0.55rem 2rem 0.55rem 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.88);
+        color: var(--text-h);
+        font: inherit;
+    }
+
+    .source-picker select:focus {
+        outline: 2px solid color-mix(in srgb, var(--accent) 35%, white);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 720px) {
+        .page-header {
+            gap: 0.75rem;
+        }
+
+        .site-title {
+            gap: 0.5rem;
+        }
+
+        .source-picker {
+            width: min(52vw, 11rem);
+        }
     }
 
     .load-error {

@@ -1,21 +1,41 @@
 import type { Restaurant, RestaurantDataset } from "./restaurants";
 
-export const dataSourceFiles = ["noodle.json", "curry.json"] as const;
+export type DataSource = {
+    path: string;
+    name: string;
+};
 
-export const dataUrls = dataSourceFiles.map((file) => `${import.meta.env.BASE_URL}data/${file}`);
+export type LoadedRestaurants = {
+    items: Restaurant[];
+    geocodeAttribution: string | null;
+};
 
-export async function loadRestaurants(): Promise<Restaurant[]> {
-    const datasets = await Promise.all(
-        dataUrls.map(async (dataUrl, index) => {
-            const response = await fetch(dataUrl);
+const sourceListUrl = `${import.meta.env.BASE_URL}data/.sourcelist.json`;
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${dataSourceFiles[index]}: ${response.status} ${response.statusText}`);
-            }
+function getDataUrl(path: string) {
+    return `${import.meta.env.BASE_URL}data/${path}`;
+}
 
-            return (await response.json()) as RestaurantDataset;
-        }),
-    );
+export async function loadSourceList(): Promise<DataSource[]> {
+    const response = await fetch(sourceListUrl);
 
-    return datasets.flatMap((dataset) => dataset.items);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch .sourcelist.json: ${response.status} ${response.statusText}`);
+    }
+
+    return (await response.json()) as DataSource[];
+}
+
+export async function loadRestaurants(path: string): Promise<LoadedRestaurants> {
+    const response = await fetch(getDataUrl(path));
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch ${path}: ${response.status} ${response.statusText}`);
+    }
+
+    const dataset = (await response.json()) as RestaurantDataset;
+    return {
+        items: dataset.items,
+        geocodeAttribution: dataset.attribution?.geocoding ?? null,
+    };
 }

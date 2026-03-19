@@ -23,7 +23,7 @@ bun install
 
 ### 1. 準備 CSV
 
-可先從這份 Google Sheet [範本](https://docs.google.com/spreadsheets/d/1mGLvi3M9-5V9HhEXjmIzgJdwr2YWqURBffiKIiwnI-Y/edit?usp=sharing) 開始，複製到自己的雲端硬碟後，添加你自己的餐廳資料。完成後，點擊「檔案」>「下載」>「逗號分隔值 (.csv)」以匯出成 CSV，重新命名為如 `list.csv` 這樣的檔名，並放在本專案的主資料夾中。
+可先從這份 [Google Sheet 範本](https://docs.google.com/spreadsheets/d/1mGLvi3M9-5V9HhEXjmIzgJdwr2YWqURBffiKIiwnI-Y/edit?usp=sharing) 開始，複製到自己的雲端硬碟後，添加你自己的餐廳資料。完成後，點擊「檔案」>「下載」>「逗號分隔值 (.csv)」以匯出成 CSV，重新命名為如 `list.csv` 這樣的檔名，並放在本專案的主資料夾中。
 
 各個欄位的說明可以參考 Google Sheet 範本中的說明文字，其中「店名」、「評級」、「價位」為必填欄位；「經緯度」或「地址」至少要有一個；「筆記」和「標籤」為選填欄位。
 

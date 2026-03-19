@@ -33,19 +33,26 @@ export async function convertCsvToRestaurantDataset(
     let usedGeocoding = false;
 
     for (const [index, row] of rows.entries()) {
-        const name = requireField(row, "店名");
+        const name = optionalField(row, "店名") ?? "";
 
         onProgress?.({
             type: "row",
             rowIndex: index,
             name,
+            completedRows: index + 1,
+            totalRows: rows.length,
         });
 
         const needsLookup = rowNeedsLookup(row);
-        const restaurant = await buildRestaurant(row, geocoder);
 
-        usedGeocoding ||= needsLookup;
-        items.push(restaurant);
+        try {
+            const restaurant = await buildRestaurant(row, geocoder);
+
+            usedGeocoding ||= needsLookup;
+            items.push(restaurant);
+        } catch (error) {
+            throw createRowError(index, row, error);
+        }
 
         if (needsLookup && index < rows.length - 1 && geocodeDelayMs > 0) {
             await delay(geocodeDelayMs);
@@ -227,4 +234,12 @@ function delay(ms: number) {
     return new Promise<void>((resolve) => {
         setTimeout(resolve, ms);
     });
+}
+
+function createRowError(rowIndex: number, row: CsvRow, error: unknown): Error {
+    const rowName = optionalField(row, "店名");
+    const lineNumber = rowIndex + 2;
+    const message = error instanceof Error ? error.message : String(error);
+
+    return new Error(`CSV line ${lineNumber}${rowName ? ` (${rowName})` : ""}: ${message}`);
 }

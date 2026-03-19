@@ -39,6 +39,8 @@ export type ConversionProgressEvent =
           type: "row";
           rowIndex: number;
           name: string;
+          completedRows: number;
+          totalRows: number;
       }
     | {
           type: "complete";

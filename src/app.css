@@ -69,6 +69,15 @@ h2 {
 p {
     margin: 0;
 }
+a {
+    color: var(--accent);
+    text-decoration: dotted underline;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+a:hover {
+    color: var(--accent-border);
+}
 
 code {
     font-family: var(--mono);

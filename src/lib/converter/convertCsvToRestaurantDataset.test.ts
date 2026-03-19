@@ -98,25 +98,25 @@ describe("convertCsvToRestaurantDataset", () => {
     it("fails when required fields are missing", async () => {
         await expect(
             convertCsvToRestaurantDataset("店名,評級,價位,地址\n,T1,100,台北", { geocoder: createGeocoder() }),
-        ).rejects.toThrow('Missing required field "店名".');
+        ).rejects.toThrow('CSV line 2: Missing required field "店名".');
         await expect(
             convertCsvToRestaurantDataset("店名,評級,價位,地址\n店A,,100,台北", { geocoder: createGeocoder() }),
-        ).rejects.toThrow('Missing required field "評級".');
+        ).rejects.toThrow('CSV line 2 (店A): Missing required field "評級".');
         await expect(
             convertCsvToRestaurantDataset("店名,評級,價位,地址\n店A,T1,,台北", { geocoder: createGeocoder() }),
-        ).rejects.toThrow('Missing required field "價位".');
+        ).rejects.toThrow('CSV line 2 (店A): Missing required field "價位".');
     });
 
     it("fails on malformed coordinates, tier, and price", async () => {
         await expect(
             convertCsvToRestaurantDataset("店名,評級,價位,經緯度\n店A,T1,100,abc", { geocoder: createGeocoder() }),
-        ).rejects.toThrow("Invalid coordinates: abc");
+        ).rejects.toThrow("CSV line 2 (店A): Invalid coordinates: abc");
         await expect(
             convertCsvToRestaurantDataset("店名,評級,價位,地址\n店A,wrong,100,台北", { geocoder: createGeocoder() }),
-        ).rejects.toThrow('Unable to parse tier from "wrong".');
+        ).rejects.toThrow('CSV line 2 (店A): Unable to parse tier from "wrong".');
         await expect(
             convertCsvToRestaurantDataset("店名,評級,價位,地址\n店A,T2,abc,台北", { geocoder: createGeocoder() }),
-        ).rejects.toThrow('Unable to parse integer for "價位" from "abc".');
+        ).rejects.toThrow('CSV line 2 (店A): Unable to parse integer for "價位" from "abc".');
     });
 
     it("emits start, row, and complete in order", async () => {
@@ -132,7 +132,7 @@ describe("convertCsvToRestaurantDataset", () => {
 
         expect(events).toEqual([
             { type: "start", totalRows: 1 },
-            { type: "row", rowIndex: 0, name: "地址店" },
+            { type: "row", rowIndex: 0, name: "地址店", completedRows: 1, totalRows: 1 },
             { type: "complete", itemCount: 1, usedGeocoding: true },
         ]);
     });
@@ -149,8 +149,8 @@ describe("convertCsvToRestaurantDataset", () => {
 
         expect(events).toEqual([
             { type: "start", totalRows: 2 },
-            { type: "row", rowIndex: 0, name: "地址店" },
-            { type: "row", rowIndex: 1, name: "壞資料店" },
+            { type: "row", rowIndex: 0, name: "地址店", completedRows: 1, totalRows: 2 },
+            { type: "row", rowIndex: 1, name: "壞資料店", completedRows: 2, totalRows: 2 },
         ]);
     });
 

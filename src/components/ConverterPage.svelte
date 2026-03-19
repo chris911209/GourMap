@@ -111,9 +111,6 @@
             <span>返回地圖</span>
         </a>
         <h1>地圖用CSV轉換器</h1>
-        <p class="converter-intro">
-            上傳 CSV 後直接在瀏覽器執行與 CLI 同步的轉換流程。缺少地址或座標時，會依相同規則觸發地理編碼。
-        </p>
     </section>
 
     <section class="converter-card">
@@ -221,11 +218,6 @@
         display: grid;
         gap: 0.75rem;
         padding-top: clamp(1rem, 3vw, 2rem);
-    }
-
-    .converter-intro {
-        max-width: 42rem;
-        color: var(--text-h);
     }
 
     .converter-back {

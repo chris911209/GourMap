@@ -2,6 +2,8 @@
     import { tierBadge, tierColor, tierName } from "../lib/restaurants";
     import OverlayPanel from "./OverlayPanel.svelte";
 
+    const converterHref = `${import.meta.env.BASE_URL}converter`;
+
     let {
         open = true,
         onOpenChange = () => {},
@@ -44,10 +46,17 @@
         {/each}
     </ul>
 
-    <a class="legend-source-link" href="https://github.com/Dogeon188/GourMap" target="_blank" rel="noreferrer">
-        <img class="legend-source-link__icon" src={`${import.meta.env.BASE_URL}github.png`} alt="" aria-hidden="true" />
-        <span>Source code</span>
-    </a>
+    <div class="legend-links">
+        <a class="legend-source-link" href="https://github.com/Dogeon188/GourMap" target="_blank" rel="noreferrer">
+            <img class="legend-source-link__icon" src={`${import.meta.env.BASE_URL}github.png`} alt="" aria-hidden="true" />
+            <span>Source code</span>
+        </a>
+
+        <a class="legend-source-link" href={converterHref}>
+            <span class="material-symbols-outlined legend-source-link__material-icon" aria-hidden="true">sync_alt</span>
+            <span>CSV 轉換器</span>
+        </a>
+    </div>
 </OverlayPanel>
 
 <style lang="scss">
@@ -117,8 +126,13 @@
         color: var(--text);
     }
 
-    .legend-source-link {
+    .legend-links {
         margin-top: 0.75rem;
+        display: grid;
+        gap: 0.45rem;
+    }
+
+    .legend-source-link {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
@@ -137,5 +151,10 @@
         height: 1rem;
         object-fit: contain;
         flex-shrink: 0;
+    }
+
+    .legend-source-link__material-icon {
+        font-size: 1rem;
+        line-height: 1;
     }
 </style>

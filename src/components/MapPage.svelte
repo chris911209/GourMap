@@ -1,9 +1,9 @@
 <script lang="ts">
+    import { loadRestaurants as fetchRestaurants, loadSourceList, type DataSource } from "../lib/data";
+    import { compareTierDescending, tierBadge, tierName, type Restaurant } from "../lib/restaurants";
     import LegendPanel from "./LegendPanel.svelte";
     import OverlayPanel from "./OverlayPanel.svelte";
     import RestaurantMap from "./RestaurantMap.svelte";
-    import { loadRestaurants as fetchRestaurants, loadSourceList, type DataSource } from "../lib/data";
-    import { compareTierDescending, tierBadge, tierName, type Restaurant } from "../lib/restaurants";
 
     let loadError = $state<string | null>(null);
     let legendOpen = $state(false);
@@ -395,6 +395,10 @@
         .header-controls {
             flex-wrap: wrap;
             justify-content: flex-end;
+        }
+
+        .utility-link {
+            display: none;
         }
 
         .source-picker {

@@ -16,6 +16,7 @@
         "@esri/arcgis-rest-geocoding": "^4.10.1",
         "@sveltejs/vite-plugin-svelte": "^7.0.0",
         "@tsconfig/svelte": "^5.0.8",
+        "@types/bun": "^1.3.11",
         "@types/leaflet": "^1.9.21",
         "@types/node": "^24.12.0",
         "cli-progress": "^3.12.0",

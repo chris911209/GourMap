@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Redirecting…</title>
+        <script>
+            (function () {
+                const segments = location.pathname.split("/").filter(Boolean);
+                const repoBase = segments.length > 1 ? `/${segments[0]}` : "";
+                const requested = `/${segments.slice(repoBase ? 1 : 0).join("/")}` || "/";
+                const target = `${repoBase}/?p=${encodeURIComponent(`${requested}${location.search}${location.hash}`)}`;
+                location.replace(target);
+            })();
+        </script>
+    </head>
+    <body></body>
+</html>

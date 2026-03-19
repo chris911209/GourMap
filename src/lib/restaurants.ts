@@ -1,8 +1,6 @@
 import { mount, unmount } from "svelte";
 import MarkerPopup from "../components/MarkerPopup.svelte";
 
-export type District = string;
-
 export type Tier = number;
 
 export type PriceBucket = number;
@@ -11,7 +9,6 @@ export type Restaurant = {
     name: string;
     lat: number;
     lng: number;
-    district: District;
     tier: Tier;
     priceBucket: PriceBucket;
     address?: string;

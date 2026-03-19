@@ -13,7 +13,6 @@
     let geocodeAttribution = $state<string | null>(null);
     let defaultBounds = $state<[[number, number], [number, number]] | null>(null);
     let allRestaurants = $state<Restaurant[]>([]);
-    let selectedDistrict = $state("all");
     let selectedTag = $state("all");
     let selectedTier = $state("all");
     let selectedMinPrice = $state("all");
@@ -37,7 +36,6 @@
         }
     }
 
-    let districtOptions = $derived.by(() => getUniqueOptions(allRestaurants.map((shop) => shop.district)));
     let tagOptions = $derived.by(() => getUniqueOptions(allRestaurants.flatMap((shop) => shop.tags ?? [])));
     let tierOptions = $derived.by(() => [...new Set(allRestaurants.map((shop) => shop.tier))].sort((a, b) => a - b));
     let priceOptions = $derived.by(() => getPriceOptions(allRestaurants.map((shop) => shop.priceBucket)));
@@ -46,13 +44,12 @@
     );
     let filteredRestaurants = $derived.by(() =>
         allRestaurants.filter((shop) => {
-            const districtMatches = selectedDistrict === "all" || shop.district === selectedDistrict;
             const tagMatches = selectedTag === "all" || (shop.tags ?? []).includes(selectedTag);
             const tierMatches = selectedTier === "all" || String(shop.tier) === selectedTier;
             const minPriceMatches = selectedMinPrice === "all" || shop.priceBucket >= Number(selectedMinPrice);
             const maxPriceMatches = selectedMaxPrice === "all" || shop.priceBucket <= Number(selectedMaxPrice);
 
-            return districtMatches && tagMatches && tierMatches && minPriceMatches && maxPriceMatches;
+            return tagMatches && tierMatches && minPriceMatches && maxPriceMatches;
         }),
     );
 
@@ -88,6 +85,8 @@
             dataSources = [];
             selectedSourcePath = "";
             clearRestaurantData();
+            
+            console.error("Failed to load source list:", error);
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
     }
@@ -128,6 +127,8 @@
             }
 
             clearRestaurantData();
+
+            console.error(`Failed to load restaurant data from source "${path}":`, error);
             loadError = error instanceof Error ? error.message : "Failed to load restaurant data.";
         }
     }
@@ -153,7 +154,6 @@
     }
 
     function resetFilters() {
-        selectedDistrict = "all";
         selectedTag = "all";
         selectedTier = "all";
         selectedMinPrice = "all";
@@ -235,17 +235,6 @@
                     <p class="filter-count">{filteredRestaurants.length} / {allRestaurants.length} 間店家</p>
                     <button class="filter-reset" type="button" onclick={resetFilters}>清除</button>
                 </div>
-
-                <label class="filter-field">
-                    <span class="filter-label">行政區</span>
-                    <select bind:value={selectedDistrict}>
-                        <option value="all">全部</option>
-                        {#each districtOptions as district (district)}
-                            <option value={district}>{district}</option>
-                        {/each}
-                    </select>
-                </label>
-
                 <label class="filter-field">
                     <span class="filter-label">標籤</span>
                     <select bind:value={selectedTag}>
@@ -257,7 +246,7 @@
                 </label>
 
                 <label class="filter-field">
-                    <span class="filter-label">Tier</span>
+                    <span class="filter-label">評級</span>
                     <select bind:value={selectedTier}>
                         <option value="all">全部</option>
                         {#each tierOptions as tier (tier)}

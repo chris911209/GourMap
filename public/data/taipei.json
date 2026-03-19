@@ -1,25 +1,26 @@
 {
     "$schema": "./restaurants.schema.json",
-    "attribution": {
-        "geocoding": "Powered by <a href=\"https://developers.arcgis.com/documentation/mapping-and-location-services/geocoding/\" target=\"_blank\" rel=\"noopener noreferrer\">Esri</a>"
+    "view": {
+        "bounds": [
+            [25.0203065, 121.5145496354394],
+            [25.064236979099842, 121.533749]
+        ]
     },
     "items": [
         {
             "name": "老建中麵店",
             "lat": 25.02912475143138,
             "lng": 121.5145496354394,
-            "district": "中正區",
             "tier": 2,
             "priceBucket": 150,
             "address": "100 臺北市中正區泉州街39號",
-            "notes": "一定要吃紅油抄手麵加白飯切花干，上菜速度比較慢",
+            "notes": "一定要吃紅油抄手麵加白飯切花干，上菜速度比較慢\r\ntest",
             "tags": ["麵食", "小吃"]
         },
         {
             "name": "十巷咖哩",
             "lat": 25.064236979099842,
             "lng": 121.523763719133,
-            "district": "中山區",
             "tier": 0,
             "priceBucket": 200,
             "address": "104臺北市中山區雙城街10巷25-1號",
@@ -30,7 +31,6 @@
             "name": "鳳城燒臘",
             "lat": 25.0203065,
             "lng": 121.533749,
-            "district": "大安區",
             "tier": 3,
             "priceBucket": 150,
             "address": "106臺北市大安區新生南路三段58之3號",

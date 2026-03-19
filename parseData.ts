@@ -13,7 +13,6 @@ type Restaurant = {
     name: string;
     lat: number;
     lng: number;
-    district: string;
     tier: number;
     priceBucket: number;
     address?: string;
@@ -37,7 +36,6 @@ type GeocodeResult = {
     lat: number;
     lng: number;
     address: string;
-    district: string;
     plusCode?: string;
 };
 
@@ -52,12 +50,11 @@ const DEFAULT_SCHEMA_PATH = "./restaurants.schema.json";
 const GEOCODING_ATTRIBUTION = `Powered by <a href="https://developers.arcgis.com/documentation/mapping-and-location-services/geocoding/" target="_blank" rel="noopener noreferrer">Esri</a>`;
 
 const csvRowSchema = z.record(z.string(), z.string());
-const coordinateSchema = z.tuple([z.number().finite(), z.number().finite()]);
+const coordinateSchema = z.tuple([z.number(), z.number()]);
 const geocodeResultSchema = z.object({
-    lat: z.number().finite(),
-    lng: z.number().finite(),
+    lat: z.number(),
+    lng: z.number(),
     address: z.string().trim().min(1),
-    district: z.string().trim().min(1),
     plusCode: z.string().trim().min(1).optional(),
 });
 
@@ -197,17 +194,10 @@ async function buildRestaurant(row: CsvRow, geocodeEnabled: boolean): Promise<Re
     }
 
     if (coordinates && addressText) {
-        const district = extractDistrictFromAddress(addressText);
-
-        if (!district) {
-            throw new Error(`Unable to determine district from provided address "${addressText}".`);
-        }
-
         return {
             name,
             lat: coordinates[0],
             lng: coordinates[1],
-            district,
             tier,
             priceBucket,
             address: addressText,
@@ -227,7 +217,6 @@ async function buildRestaurant(row: CsvRow, geocodeEnabled: boolean): Promise<Re
             name,
             lat: coordinates[0],
             lng: coordinates[1],
-            district: geocode.district,
             tier,
             priceBucket,
             address: geocode.address,
@@ -243,7 +232,6 @@ async function buildRestaurant(row: CsvRow, geocodeEnabled: boolean): Promise<Re
         name,
         lat: geocode.lat,
         lng: geocode.lng,
-        district: geocode.district,
         tier,
         priceBucket,
         address: addressText,
@@ -321,26 +309,20 @@ async function reverseGeocode(lat: number, lng: number): Promise<GeocodeResult> 
     const response = await esriReverseGeocode([lng, lat], {
         params: {
             langCode: "zh-tw",
-            outFields: ["Match_addr", "LongLabel", "Address", "District", "City", "Subregion", "Region", "Postal"],
+            outFields: ["Match_addr", "LongLabel", "Address", "City", "Subregion", "Region", "Postal"],
         },
     });
 
     const address = formatArcGisAddress(response.address);
-    const district = extractArcGisDistrict(response.address);
 
     if (!address) {
         throw new Error(`Reverse geocoding returned no address for ${lat}, ${lng}.`);
-    }
-
-    if (!district) {
-        throw new Error(`Reverse geocoding returned no district for ${lat}, ${lng}.`);
     }
 
     return geocodeResultSchema.parse({
         lat,
         lng,
         address,
-        district,
     });
 }
 
@@ -361,17 +343,7 @@ async function forwardGeocode(name: string, address: string): Promise<GeocodeRes
         const response = await geocode({
             singleLine: query,
             countryCode: "TWN",
-            outFields: [
-                "Addr_type",
-                "Match_addr",
-                "LongLabel",
-                "Address",
-                "District",
-                "City",
-                "Subregion",
-                "Region",
-                "Postal",
-            ],
+            outFields: ["Addr_type", "Match_addr", "LongLabel", "Address", "City", "Subregion", "Region", "Postal"],
             params: {
                 langCode: "zh-tw",
                 maxLocations: 1,
@@ -402,37 +374,16 @@ async function forwardGeocode(name: string, address: string): Promise<GeocodeRes
 
     const lat = match.location.y;
     const lng = match.location.x;
-    const district = extractArcGisDistrict(match.attributes) ?? extractDistrictFromAddress(address);
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
         throw new Error(`Forward geocoding returned invalid coordinates for "${address}".`);
-    }
-
-    if (!district) {
-        throw new Error(`Forward geocoding returned no district for "${address}".`);
     }
 
     return geocodeResultSchema.parse({
         lat,
         lng,
         address,
-        district,
     });
-}
-
-function extractArcGisDistrict(address?: Record<string, string | number | undefined>): string | undefined {
-    if (!address) {
-        return undefined;
-    }
-
-    return [
-        stringValue(address.District),
-        stringValue(address.City),
-        stringValue(address.Subregion),
-        stringValue(address.Region),
-    ]
-        .map((value) => value?.trim())
-        .find((value) => Boolean(value));
 }
 
 function formatArcGisAddress(address?: Record<string, string | number | undefined>): string | undefined {
@@ -443,25 +394,12 @@ function formatArcGisAddress(address?: Record<string, string | number | undefine
     const formatted = [
         stringValue(address.LongLabel),
         stringValue(address.Match_addr),
-        [
-            stringValue(address.Postal),
-            stringValue(address.City),
-            stringValue(address.District),
-            stringValue(address.Address),
-        ]
-            .filter(Boolean)
-            .join(""),
+        [stringValue(address.Postal), stringValue(address.City), stringValue(address.Address)].filter(Boolean).join(""),
     ]
         .map((value) => value?.trim())
         .find((value) => Boolean(value));
 
     return formatted || undefined;
-}
-
-function extractDistrictFromAddress(address: string): string | undefined {
-    const compact = address.replace(/\s+/g, "");
-    const match = compact.match(/(?:市|縣)([^市縣區鄉鎮]+(?:區|鄉|鎮|市))/u);
-    return match?.[1];
 }
 
 function buildAddressQueries(name: string, address: string): string[] {

@@ -19,13 +19,12 @@ const dataSourceSchema = z.object({
     name: z.string(),
 });
 
-const coordinatePairSchema = z.tuple([z.number().finite(), z.number().finite()]);
+const coordinatePairSchema = z.tuple([z.number(), z.number()]);
 
 const restaurantSchema = z.object({
     name: z.string(),
     lat: z.number(),
     lng: z.number(),
-    district: z.string(),
     tier: z.number(),
     priceBucket: z.number(),
     address: z.string().optional(),

@@ -48,7 +48,7 @@
             "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["name", "lat", "lng", "district", "tier", "priceBucket"],
+                "required": ["name", "lat", "lng", "tier", "priceBucket"],
                 "properties": {
                     "name": {
                         "type": "string",
@@ -67,15 +67,10 @@
                         "maximum": 180,
                         "description": "Longitude in decimal degrees."
                     },
-                    "district": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Administrative district or area."
-                    },
                     "tier": {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 6,
+                        "maximum": 7,
                         "description": "Ordered ranking bucket; lower usually means more preferred."
                     },
                     "priceBucket": {

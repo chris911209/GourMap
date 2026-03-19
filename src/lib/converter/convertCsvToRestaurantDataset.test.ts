@@ -92,7 +92,9 @@ describe("convertCsvToRestaurantDataset", () => {
     });
 
     it("fails on empty csv", async () => {
-        await expect(convertCsvToRestaurantDataset("", { geocoder: createGeocoder() })).rejects.toThrow("CSV is empty.");
+        await expect(convertCsvToRestaurantDataset("", { geocoder: createGeocoder() })).rejects.toThrow(
+            "CSV is empty.",
+        );
     });
 
     it("fails when required fields are missing", async () => {
@@ -119,6 +121,18 @@ describe("convertCsvToRestaurantDataset", () => {
         ).rejects.toThrow('CSV line 2 (店A): Unable to parse integer for "價位" from "abc".');
     });
 
+    it('parses any tier starting with "EX " as the closed tier', async () => {
+        const dataset = await convertCsvToRestaurantDataset(
+            "店名,評級,價位,地址\n已倒閉店,EX 搬家後歇業,200,台北市中正區測試路1號",
+            { geocoder: createGeocoder(), geocodeDelayMs: 0 },
+        );
+
+        expect(dataset.items[0]).toMatchObject({
+            name: "已倒閉店",
+            tier: 7,
+        });
+    });
+
     it("emits start, row, and complete in order", async () => {
         const csv = ["店名,評級,價位,地址", "地址店,T4,320,台北市中正區測試路1號"].join("\n");
         const geocoder = createGeocoder();
@@ -138,9 +152,7 @@ describe("convertCsvToRestaurantDataset", () => {
     });
 
     it("does not emit complete after a failing row", async () => {
-        const csv = ["店名,評級,價位,地址", "地址店,T4,320,台北市中正區測試路1號", "壞資料店,,320,台北"].join(
-            "\n",
-        );
+        const csv = ["店名,評級,價位,地址", "地址店,T4,320,台北市中正區測試路1號", "壞資料店,,320,台北"].join("\n");
         const { events, onProgress } = collectProgress();
 
         await expect(

@@ -28,7 +28,16 @@ export function createArcGisGeocoder(): ConverterGeocoder {
                     const response = await geocode({
                         singleLine: query,
                         countryCode: "TWN",
-                        outFields: ["Addr_type", "Match_addr", "LongLabel", "Address", "City", "Subregion", "Region", "Postal"],
+                        outFields: [
+                            "Addr_type",
+                            "Match_addr",
+                            "LongLabel",
+                            "Address",
+                            "City",
+                            "Subregion",
+                            "Region",
+                            "Postal",
+                        ],
                         params: {
                             langCode: "zh-tw",
                             maxLocations: 1,
@@ -46,7 +55,8 @@ export function createArcGisGeocoder(): ConverterGeocoder {
                                 x: candidate.location.x,
                                 y: candidate.location.y,
                             },
-                            attributes: (candidate.attributes as Record<string, string | number | undefined> | undefined) ?? {},
+                            attributes:
+                                (candidate.attributes as Record<string, string | number | undefined> | undefined) ?? {},
                         };
                         break;
                     }
@@ -134,7 +144,16 @@ function buildAddressQueries(name: string, address: string): string[] {
     const compact = address.replace(/\s+/g, "");
 
     return [
-        ...new Set([address, compact, `${name} ${address}`, `${name}${compact}`, `臺灣${compact}`, `台灣${compact}`, `臺灣${name}${compact}`, `台灣${name}${compact}`]),
+        ...new Set([
+            address,
+            compact,
+            `${name} ${address}`,
+            `${name}${compact}`,
+            `臺灣${compact}`,
+            `台灣${compact}`,
+            `臺灣${name}${compact}`,
+            `台灣${name}${compact}`,
+        ]),
     ];
 }
 

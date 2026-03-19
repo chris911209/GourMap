@@ -2,7 +2,7 @@
     import L from "leaflet";
     import type { Snippet } from "svelte";
     import { fallbackView, fallbackZoom, provider } from "../lib/map";
-    import { mountPopupContent, tierColor, type Restaurant } from "../lib/restaurants";
+    import { mountPopupContent, tierBadge, tierColor, type Restaurant } from "../lib/restaurants";
 
     let {
         restaurants = [],
@@ -81,7 +81,7 @@
                 fillOpacity: 0.7,
             })
                 .addTo(group)
-                .bindTooltip(`<b>T${shop.tier}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })
+                .bindTooltip(`<b>${tierBadge(shop.tier)}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })
                 .bindPopup(popupContent.element)
                 .on({
                     popupopen: popupContent.mount,

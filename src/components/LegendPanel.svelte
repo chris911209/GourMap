@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tierColor, tierName } from "../lib/restaurants";
+    import { tierBadge, tierColor, tierName } from "../lib/restaurants";
     import OverlayPanel from "./OverlayPanel.svelte";
 
     let {
@@ -36,7 +36,7 @@
                 >
                     <span class="legend-label">
                         <span class="legend-swatch" style={`background:${tierColor[Number(tier)]}`}></span>
-                        <span class="legend-tier">T{tier}</span>
+                        <span class="legend-tier">{tierBadge(Number(tier))}</span>
                     </span>
                     <strong>{label}</strong>
                 </button>

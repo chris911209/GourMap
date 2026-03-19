@@ -107,11 +107,7 @@
 <main class="converter-page">
     <section class="converter-hero">
         <a class="converter-back" href={homeHref}>
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-                <path
-                    d="M8.7 4.3a1 1 0 0 1 0 1.4L5.41 9H16a1 1 0 1 1 0 2H5.41l3.3 3.3a1 1 0 1 1-1.42 1.4l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 0 1 1.41 0Z"
-                ></path>
-            </svg>
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
             <span>返回地圖</span>
         </a>
         <h1>地圖用CSV轉換器</h1>
@@ -148,20 +144,12 @@
 
         <div class="converter-actions">
             <button type="button" class="convert-button" onclick={handleConvert} disabled={!file || converting}>
-                <svg viewBox="0 0 20 20" aria-hidden="true">
-                    <path
-                        d="M10 2a1 1 0 0 1 1 1v5.17l1.59-1.58A1 1 0 0 1 14 8l-3.3 3.3a1 1 0 0 1-1.4 0L6 8a1 1 0 1 1 1.41-1.41L9 8.17V3a1 1 0 0 1 1-1Zm-5 11a1 1 0 0 1 1 1v1h8v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"
-                    ></path>
-                </svg>
+                <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
                 <span>{converting ? "轉換中..." : "開始轉換"}</span>
             </button>
             {#if downloadHref}
                 <a class="download-link" href={downloadHref} download={downloadName}>
-                    <svg viewBox="0 0 20 20" aria-hidden="true">
-                        <path
-                            d="M10 2a1 1 0 0 1 1 1v7.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42L9 10.59V3a1 1 0 0 1 1-1Zm-6 13a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Z"
-                        ></path>
-                    </svg>
+                    <span class="material-symbols-outlined" aria-hidden="true">download</span>
                     <span>下載 {downloadName}</span>
                 </a>
             {/if}
@@ -249,15 +237,6 @@
         font-weight: 700;
         text-decoration: none;
         border-bottom: 2px solid rgba(8, 6, 13, 0.12);
-    }
-
-    .converter-back svg,
-    .convert-button svg,
-    .download-link svg {
-        width: 1rem;
-        height: 1rem;
-        flex: none;
-        fill: currentColor;
     }
 
     .converter-card {

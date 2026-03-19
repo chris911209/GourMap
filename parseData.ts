@@ -76,7 +76,9 @@ function parseCliArgs(args: string[]): CliOptions {
     });
 
     if (positionals.length === 0) {
-        throw new Error("Usage: bun run parseData.ts <input.csv> [--out output.json] [--schema ./restaurants.schema.json]");
+        throw new Error(
+            "Usage: bun run parseData.ts <input.csv> [--out output.json] [--schema ./restaurants.schema.json]",
+        );
     }
 
     if (positionals.length > 1) {

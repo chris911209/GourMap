@@ -3,7 +3,7 @@
     import OverlayPanel from "./OverlayPanel.svelte";
     import RestaurantMap from "./RestaurantMap.svelte";
     import { loadRestaurants as fetchRestaurants, loadSourceList, type DataSource } from "../lib/data";
-    import { tierName, type Restaurant } from "../lib/restaurants";
+    import { compareTierDescending, tierBadge, tierName, type Restaurant } from "../lib/restaurants";
 
     let loadError = $state<string | null>(null);
     let legendOpen = $state(false);
@@ -118,7 +118,7 @@
                 return;
             }
 
-            allRestaurants = loadedRestaurants.items.sort((a, b) => b.tier - a.tier);
+            allRestaurants = loadedRestaurants.items.sort((a, b) => compareTierDescending(a.tier, b.tier));
             geocodeAttribution = loadedRestaurants.geocodeAttribution;
             defaultBounds = loadedRestaurants.defaultBounds;
             loadError = null;
@@ -252,7 +252,7 @@
                     <select bind:value={selectedTier}>
                         <option value="all">全部</option>
                         {#each tierOptions as tier (tier)}
-                            <option value={String(tier)}>T{tier} {tierName[tier]}</option>
+                            <option value={String(tier)}>{tierBadge(tier)} {tierName[tier]}</option>
                         {/each}
                     </select>
                 </label>

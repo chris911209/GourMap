@@ -70,7 +70,7 @@
                     "tier": {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 6,
+                        "maximum": 7,
                         "description": "Ordered ranking bucket; lower usually means more preferred."
                     },
                     "priceBucket": {

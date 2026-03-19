@@ -1,5 +1,6 @@
 import { parse } from "csv/browser/esm/sync";
 import { z } from "zod";
+import { CLOSED_TIER } from "../tier";
 import { createArcGisGeocoder } from "./geocoding";
 import type { ConvertCsvOptions, CsvRow, Restaurant, RestaurantDataset } from "./types";
 
@@ -190,6 +191,10 @@ function parseCoordinates(value: string): [number, number] {
 }
 
 function parseTier(value: string): number {
+    if (/^EX\b/i.test(value.trim())) {
+        return CLOSED_TIER;
+    }
+
     const match = value.match(/[Tt]\s*(\d+)/);
 
     if (!match) {

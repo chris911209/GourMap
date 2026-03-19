@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tierName, type Restaurant } from "../lib/restaurants";
+    import { tierBadge, tierName, type Restaurant } from "../lib/restaurants";
 
     let { restaurant } = $props<{ restaurant: Restaurant }>();
 </script>
@@ -13,7 +13,7 @@
         <span class="material-symbols-outlined">workspace_premium</span>
         <div class="meta-copy">
             <span class="meta-label">評級</span>
-            <strong class="meta-value">{tierName[restaurant.tier]}</strong>
+            <strong class="meta-value">{tierBadge(restaurant.tier)} {tierName[restaurant.tier]}</strong>
         </div>
     </div>
 

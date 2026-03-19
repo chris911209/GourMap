@@ -4,61 +4,66 @@
     let { restaurant } = $props<{ restaurant: Restaurant }>();
 </script>
 
-<header class="popup-header">
-    <h3 class="popup-title">{restaurant.name}</h3>
-</header>
+<div class="popup-content">
+    <header class="popup-header">
+        <h3 class="popup-title">{restaurant.name}</h3>
+    </header>
 
-<div class="meta-grid">
-    <div class="meta-item meta-item-tier">
-        <span class="material-symbols-outlined">workspace_premium</span>
-        <div class="meta-copy">
-            <span class="meta-label">評級</span>
-            <strong class="meta-value">{tierBadge(restaurant.tier)} {tierName[restaurant.tier]}</strong>
+    <div class="meta-grid">
+        <div class="meta-item meta-item-tier">
+            <span class="material-symbols-outlined">workspace_premium</span>
+            <div class="meta-copy">
+                <span class="meta-label">評級</span>
+                <strong class="meta-value">{tierBadge(restaurant.tier)} {tierName[restaurant.tier]}</strong>
+            </div>
+        </div>
+
+        <div class="meta-item">
+            <span class="material-symbols-outlined">payments</span>
+            <div class="meta-copy">
+                <span class="meta-label">價位</span>
+                <strong class="meta-value">${restaurant.priceBucket}</strong>
+            </div>
         </div>
     </div>
 
-    <div class="meta-item">
-        <span class="material-symbols-outlined">payments</span>
-        <div class="meta-copy">
-            <span class="meta-label">價位</span>
-            <strong class="meta-value">${restaurant.priceBucket}</strong>
+    {#if restaurant.tags && restaurant.tags.length > 0}
+        <div class="tag-row" aria-label="Tags">
+            {#each restaurant.tags as tag}
+                <span class="tag">{tag}</span>
+            {/each}
         </div>
-    </div>
+    {/if}
+
+    {#if restaurant.notes}
+        <section class="notes">
+            <span class="meta-label">Notes</span>
+            <p>{restaurant.notes}</p>
+        </section>
+    {/if}
+
+    <!-- 在 google 地圖開啟 -->
+    {#if restaurant.address}
+        <button
+            class="map-button"
+            onclick={() =>
+                window.open(
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`,
+                    "_blank",
+                )}
+        >
+            <span class="material-symbols-outlined">place</span>
+            <span>Google 地圖導航</span>
+        </button>
+    {/if}
 </div>
 
-{#if restaurant.tags && restaurant.tags.length > 0}
-    <div class="tag-row" aria-label="Tags">
-        {#each restaurant.tags as tag}
-            <span class="tag">{tag}</span>
-        {/each}
-    </div>
-{/if}
-
-{#if restaurant.notes}
-    <section class="notes">
-        <span class="meta-label">Notes</span>
-        <p>{restaurant.notes}</p>
-    </section>
-{/if}
-
-<!-- 在 google 地圖開啟 -->
-{#if restaurant.address}
-    <button
-        class="map-button"
-        onclick={() =>
-            window.open(
-                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`,
-                "_blank",
-            )}
-    >
-        <span class="material-symbols-outlined">place</span>
-        <span>Google 地圖導航</span>
-    </button>
-{/if}
-
-<!-- </div> -->
-
 <style lang="scss">
+    .popup-content {
+        min-width: 16rem;
+        max-width: 22rem;
+    }
+    
     .popup-header {
         margin-bottom: 0.8rem;
     }

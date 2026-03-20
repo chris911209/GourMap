@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Restaurant } from "./restaurants";
+import { type Restaurant, type RestaurantComment } from "./restaurants";
 
 export type DataSource = {
     path: string;
@@ -20,6 +20,11 @@ const dataSourceSchema = z.object({
 });
 
 const coordinatePairSchema = z.tuple([z.number(), z.number()]);
+const restaurantCommentSchema = z.object({
+    username: z.string().optional(),
+    tier: z.number(),
+    notes: z.string().optional(),
+});
 
 const restaurantSchema = z.object({
     name: z.string(),
@@ -29,6 +34,7 @@ const restaurantSchema = z.object({
     priceBucket: z.number(),
     address: z.string().optional(),
     notes: z.string().optional(),
+    comments: z.array(restaurantCommentSchema).optional(),
     plusCode: z.string().optional(),
     tags: z.array(z.string()).optional(),
 });
@@ -55,6 +61,22 @@ function validationError(error: z.ZodError): Error {
 
 function getDataUrl(path: string) {
     return `${import.meta.env.BASE_URL}data/${path}`;
+}
+
+function normalizeComments(
+    tier: number,
+    notes?: string,
+    comments?: RestaurantComment[],
+): RestaurantComment[] | undefined {
+    if (comments && comments.length > 0) {
+        return comments;
+    }
+
+    if (notes) {
+        return [{ tier, notes }];
+    }
+
+    return undefined;
 }
 
 export async function loadSourceList(): Promise<DataSource[]> {
@@ -88,7 +110,21 @@ export async function loadRestaurants(path: string): Promise<LoadedRestaurants> 
 
     const dataset = parsed.data;
     return {
-        items: dataset.items as Restaurant[],
+        items: dataset.items.map((restaurant) => {
+            const normalizedComments = normalizeComments(restaurant.tier, restaurant.notes, restaurant.comments);
+
+            return {
+                name: restaurant.name,
+                lat: restaurant.lat,
+                lng: restaurant.lng,
+                tier: restaurant.tier,
+                priceBucket: restaurant.priceBucket,
+                ...(restaurant.address ? { address: restaurant.address } : {}),
+                ...(normalizedComments ? { comments: normalizedComments } : {}),
+                ...(restaurant.plusCode ? { plusCode: restaurant.plusCode } : {}),
+                ...(restaurant.tags ? { tags: restaurant.tags } : {}),
+            } satisfies Restaurant;
+        }),
         geocodeAttribution: dataset.attribution?.geocoding ?? null,
         defaultBounds: dataset.view?.bounds ?? null,
     };

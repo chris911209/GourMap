@@ -1,14 +1,15 @@
 import { parse } from "csv/browser/esm/sync";
 import { z } from "zod";
-import { CLOSED_TIER } from "../tier";
+import { CLOSED_TIER, CONTROVERSIAL_TIER } from "../tier";
 import { createArcGisGeocoder } from "./geocoding";
-import type { ConvertCsvOptions, CsvRow, Restaurant, RestaurantDataset } from "./types";
+import type { ConvertCsvOptions, CsvRow, Restaurant, RestaurantComment, RestaurantDataset } from "./types";
 
 const DEFAULT_SCHEMA_PATH = "./restaurants.schema.json";
 const GEOCODING_ATTRIBUTION =
     'Powered by <a href="https://developers.arcgis.com/documentation/mapping-and-location-services/geocoding/" target="_blank" rel="noopener noreferrer">Esri</a>';
 
 const csvRowSchema = z.record(z.string(), z.string());
+const CONTROVERSIAL_TIER_SPREAD = 3;
 
 export async function convertCsvToRestaurantDataset(
     csvText: string,
@@ -30,7 +31,7 @@ export async function convertCsvToRestaurantDataset(
         totalRows: rows.length,
     });
 
-    const items: Restaurant[] = [];
+    const restaurantByKey = new Map<string, Restaurant>();
     let usedGeocoding = false;
 
     for (const [index, row] of rows.entries()) {
@@ -48,9 +49,10 @@ export async function convertCsvToRestaurantDataset(
 
         try {
             const restaurant = await buildRestaurant(row, geocoder);
+            const restaurantKey = buildRestaurantKey(restaurant);
 
             usedGeocoding ||= needsLookup;
-            items.push(restaurant);
+            mergeRestaurantIntoMap(restaurantByKey, restaurantKey, restaurant);
         } catch (error) {
             throw createRowError(index, row, error);
         }
@@ -60,6 +62,7 @@ export async function convertCsvToRestaurantDataset(
         }
     }
 
+    const items = [...restaurantByKey.values()];
     const dataset = buildDataset(items, schemaPath, usedGeocoding);
 
     onProgress?.({
@@ -85,11 +88,13 @@ async function buildRestaurant(row: CsvRow, geocoder: NonNullable<ConvertCsvOpti
     const name = requireField(row, "店名");
     const tier = parseTier(requireField(row, "評級"));
     const priceBucket = parseInteger(requireField(row, "價位"), "價位");
+    const username = optionalField(row, "評論者");
     const notes = optionalField(row, "筆記");
     const tags = parseTags(optionalField(row, "標籤"));
     const coordinateText = optionalField(row, "經緯度");
     const addressText = optionalField(row, "地址");
     const coordinates = coordinateText ? parseCoordinates(coordinateText) : undefined;
+    const comments = buildComments([{ ...(username ? { username } : {}), tier, ...(notes ? { notes } : {}) }]);
 
     if (!coordinates && !addressText) {
         throw new Error('Each row must include at least one of "經緯度" or "地址".');
@@ -103,7 +108,7 @@ async function buildRestaurant(row: CsvRow, geocoder: NonNullable<ConvertCsvOpti
             tier,
             priceBucket,
             address: addressText,
-            ...(notes ? { notes } : {}),
+            comments,
             ...(tags.length > 0 ? { tags } : {}),
         };
     }
@@ -119,7 +124,7 @@ async function buildRestaurant(row: CsvRow, geocoder: NonNullable<ConvertCsvOpti
             priceBucket,
             address: geocode.address,
             ...(geocode.plusCode ? { plusCode: geocode.plusCode } : {}),
-            ...(notes ? { notes } : {}),
+            comments,
             ...(tags.length > 0 ? { tags } : {}),
         };
     }
@@ -134,7 +139,7 @@ async function buildRestaurant(row: CsvRow, geocoder: NonNullable<ConvertCsvOpti
         priceBucket,
         address: addressText,
         ...(geocode.plusCode ? { plusCode: geocode.plusCode } : {}),
-        ...(notes ? { notes } : {}),
+        comments,
         ...(tags.length > 0 ? { tags } : {}),
     };
 }
@@ -223,6 +228,126 @@ function parseTags(value?: string): string[] {
         .split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
+}
+
+function buildComments(comments: RestaurantComment[]): RestaurantComment[] {
+    return comments.map((comment) => ({
+        ...(comment.username ? { username: comment.username } : {}),
+        tier: comment.tier,
+        ...(comment.notes ? { notes: comment.notes } : {}),
+    }));
+}
+
+function buildRestaurantKey(restaurant: Restaurant): string {
+    const normalizedName = restaurant.name.trim().toLocaleLowerCase("zh-Hant");
+    return `coords:${normalizedName}::${restaurant.lat.toFixed(4)},${restaurant.lng.toFixed(4)}`;
+}
+
+function normalizeText(value: string): string {
+    return value.replace(/\s+/g, "").toLocaleLowerCase("zh-Hant");
+}
+
+function mergeRestaurantIntoMap(restaurantByKey: Map<string, Restaurant>, key: string, nextRestaurant: Restaurant) {
+    const existingRestaurant = restaurantByKey.get(key);
+
+    if (!existingRestaurant) {
+        restaurantByKey.set(key, {
+            ...nextRestaurant,
+            tier: deriveRestaurantTier(nextRestaurant.comments ?? []),
+        });
+        return;
+    }
+
+    const mergedComments = buildComments([...(existingRestaurant.comments ?? []), ...(nextRestaurant.comments ?? [])]);
+    const mergedTags = mergeTags(existingRestaurant.tags, nextRestaurant.tags);
+    const mergedAddress = mergeAddress(existingRestaurant.address, nextRestaurant.address);
+    const mergedPlusCode = mergeOptionalSharedField("Plus Code", existingRestaurant.plusCode, nextRestaurant.plusCode);
+
+    restaurantByKey.set(key, {
+        ...existingRestaurant,
+        lat: existingRestaurant.lat,
+        lng: existingRestaurant.lng,
+        priceBucket: mergeRequiredSharedField("價位", existingRestaurant.priceBucket, nextRestaurant.priceBucket),
+        ...(mergedAddress ? { address: mergedAddress } : {}),
+        ...(mergedPlusCode ? { plusCode: mergedPlusCode } : {}),
+        ...(mergedTags.length > 0 ? { tags: mergedTags } : {}),
+        comments: mergedComments,
+        tier: deriveRestaurantTier(mergedComments),
+    });
+}
+
+function mergeTags(existingTags?: string[], nextTags?: string[]): string[] {
+    return [...new Set([...(existingTags ?? []), ...(nextTags ?? [])])];
+}
+
+function mergeRequiredSharedField<T>(fieldName: string, existingValue: T, nextValue: T): T {
+    if (existingValue !== nextValue) {
+        throw new Error(`Conflicting values for "${fieldName}" across duplicate restaurant rows.`);
+    }
+
+    return existingValue;
+}
+
+function mergeOptionalSharedField(fieldName: string, existingValue?: string, nextValue?: string): string | undefined {
+    if (!existingValue) {
+        return nextValue;
+    }
+
+    if (!nextValue) {
+        return existingValue;
+    }
+
+    if (normalizeText(existingValue) === normalizeText(nextValue)) {
+        return existingValue;
+    }
+
+    throw new Error(`Conflicting values for "${fieldName}" across duplicate restaurant rows.`);
+}
+
+function mergeAddress(existingAddress?: string, nextAddress?: string): string | undefined {
+    if (!existingAddress) {
+        return nextAddress;
+    }
+
+    if (!nextAddress) {
+        return existingAddress;
+    }
+
+    if (normalizeText(existingAddress) === normalizeText(nextAddress)) {
+        return existingAddress;
+    }
+
+    return normalizeText(existingAddress).length >= normalizeText(nextAddress).length ? existingAddress : nextAddress;
+}
+
+function deriveRestaurantTier(comments: RestaurantComment[]): number {
+    if (comments.length === 0) {
+        return CONTROVERSIAL_TIER;
+    }
+
+    const tiers = comments.map((comment) => comment.tier);
+    const spread = Math.max(...tiers) - Math.min(...tiers);
+
+    if (spread >= CONTROVERSIAL_TIER_SPREAD) {
+        return CONTROVERSIAL_TIER;
+    }
+
+    const voteCountByTier = new Map<number, number>();
+
+    for (const tier of tiers) {
+        voteCountByTier.set(tier, (voteCountByTier.get(tier) ?? 0) + 1);
+    }
+
+    return [...voteCountByTier.entries()].sort((left, right) => {
+        const [leftTier, leftCount] = left;
+        const [rightTier, rightCount] = right;
+
+        if (leftCount !== rightCount) {
+            return rightCount - leftCount;
+        }
+
+        return rightTier - leftTier;
+    })[0][0];
 }
 
 function computeBounds(items: Restaurant[]): [[number, number], [number, number]] {

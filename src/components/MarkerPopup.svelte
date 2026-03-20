@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tierBadge, tierName, type Restaurant } from "../lib/restaurants";
+    import { tierBadge, tierColor, tierName, type Restaurant } from "../lib/restaurants";
 
     let { restaurant } = $props<{ restaurant: Restaurant }>();
 </script>
@@ -13,7 +13,7 @@
         <div class="meta-item meta-item-tier">
             <span class="material-symbols-outlined">workspace_premium</span>
             <div class="meta-copy">
-                <span class="meta-label">評級</span>
+                <span class="meta-label">綜合評級</span>
                 <strong class="meta-value">{tierBadge(restaurant.tier)} {tierName[restaurant.tier]}</strong>
             </div>
         </div>
@@ -35,10 +35,30 @@
         </div>
     {/if}
 
-    {#if restaurant.notes}
-        <section class="notes">
-            <span class="meta-label">Notes</span>
-            <p>{restaurant.notes}</p>
+    {#if restaurant.comments && restaurant.comments.length > 0}
+        <section class="comments">
+            <span class="meta-label">Comments</span>
+            <div class="comment-list">
+                {#each restaurant.comments as comment, index (`${comment.username}-${comment.tier}-${index}`)}
+                    <article class="comment-card">
+                        <div class="comment-header">
+                            <strong class="comment-username">{comment.username ?? "匿名"}</strong>
+                            <span
+                                class="comment-tier"
+                                style:--comment-tier-color={tierColor[comment.tier]}
+                                style:--comment-tier-bg={`color-mix(in srgb, ${tierColor[comment.tier]} 16%, white)`}
+                                style:--comment-tier-border={`color-mix(in srgb, ${tierColor[comment.tier]} 38%, white)`}
+                            >
+                                {tierBadge(comment.tier)} {tierName[comment.tier]}
+                            </span>
+                        </div>
+
+                        {#if comment.notes}
+                            <p>{comment.notes}</p>
+                        {/if}
+                    </article>
+                {/each}
+            </div>
         </section>
     {/if}
 
@@ -163,7 +183,7 @@
         color: var(--accent);
     }
 
-    .notes {
+    .comments {
         margin-top: 0.85rem;
         padding-top: 0.8rem;
         border-top: 1px solid var(--border);
@@ -175,6 +195,46 @@
             color: var(--text);
             white-space: pre-wrap;
         }
+    }
+    .comment-list {
+        display: grid;
+        gap: 0.55rem;
+        max-height: min(18rem, 45vh);
+        overflow-y: auto;
+        padding-right: 0.2rem;
+    }
+
+    .comment-card {
+        padding: 0.75rem 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 0.9rem;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 94%, #d8d5cc), var(--bg));
+    }
+
+    .comment-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .comment-username {
+        font-size: 0.75rem;
+        line-height: 1.2;
+        color: var(--text-h);
+    }
+
+    .comment-tier {
+        flex: 0 0 auto;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        background: var(--comment-tier-bg);
+        border: 1px solid var(--comment-tier-border);
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: var(--comment-tier-color);
+        white-space: nowrap;
     }
 
     .map-button {

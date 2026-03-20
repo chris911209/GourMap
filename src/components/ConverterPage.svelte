@@ -3,7 +3,8 @@
 
     const csvChecklist = [
         `建議先使用<a href="https://docs.google.com/spreadsheets/d/1mGLvi3M9-5V9HhEXjmIzgJdwr2YWqURBffiKIiwnI-Y/edit?usp=sharing" target="_blank">專用 Google Sheet 範本</a>整理資料，再匯出成 <code>.csv</code>。`,
-        "「店名」、「評級」、「價位」為必填；「經緯度」與「地址」至少要提供一個。",
+        "每列代表一位評論者對一家店的意見；「店名」、「評級」、「價位」為必填，「評論者」可留白，且「經緯度」與「地址」至少要提供一個。",
+        "如果同一家店在 CSV 出現多次，轉換器會依店名加地址或座標自動合併，保留每個人的 tier 與筆記。",
         "如果缺少地址或座標，轉換器會依照 CLI 相同規則補做地理編碼；若資料都齊全則不會額外查詢。",
         "轉換後請把 JSON 放進 <code>public/data/</code>，並更新 <code>public/data/.sourcelist.json</code> 才能在地圖上載入。",
     ];

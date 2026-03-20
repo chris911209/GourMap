@@ -1,6 +1,9 @@
 <script lang="ts">
     import { tierBadge, tierColor, tierName, type Restaurant } from "../lib/restaurants";
 
+    // Keep single-comment restaurants on the older inline notes layout unless this is toggled on.
+    const WRAP_SINGLE_COMMENT_IN_CARD = false;
+
     let { restaurant } = $props<{ restaurant: Restaurant }>();
 </script>
 
@@ -38,11 +41,12 @@
     {#if restaurant.comments && restaurant.comments.length > 0}
         <section class="comments">
             <span class="meta-label">Comments</span>
-            <div class="comment-list">
-                {#each restaurant.comments as comment, index (`${comment.username}-${comment.tier}-${index}`)}
-                    <article class="comment-card">
-                        <div class="comment-header">
-                            <strong class="comment-username">{comment.username ?? "匿名"}</strong>
+            {#if restaurant.comments.length === 1 && !WRAP_SINGLE_COMMENT_IN_CARD}
+                {@const comment = restaurant.comments[0]}
+                <div class="comment-inline">
+                    {#if comment.username}
+                        <div class="comment-inline-header">
+                            <strong class="comment-username">{comment.username}</strong>
                             <span
                                 class="comment-tier"
                                 style:--comment-tier-color={tierColor[comment.tier]}
@@ -52,13 +56,35 @@
                                 {tierBadge(comment.tier)} {tierName[comment.tier]}
                             </span>
                         </div>
+                    {/if}
 
-                        {#if comment.notes}
-                            <p>{comment.notes}</p>
-                        {/if}
-                    </article>
-                {/each}
-            </div>
+                    {#if comment.notes}
+                        <p>{comment.notes}</p>
+                    {/if}
+                </div>
+            {:else}
+                <div class="comment-list">
+                    {#each restaurant.comments as comment, index (`${comment.username}-${comment.tier}-${index}`)}
+                        <article class="comment-card">
+                            <div class="comment-header">
+                                <strong class="comment-username">{comment.username ?? "匿名"}</strong>
+                                <span
+                                    class="comment-tier"
+                                    style:--comment-tier-color={tierColor[comment.tier]}
+                                    style:--comment-tier-bg={`color-mix(in srgb, ${tierColor[comment.tier]} 16%, white)`}
+                                    style:--comment-tier-border={`color-mix(in srgb, ${tierColor[comment.tier]} 38%, white)`}
+                                >
+                                    {tierBadge(comment.tier)} {tierName[comment.tier]}
+                                </span>
+                            </div>
+
+                            {#if comment.notes}
+                                <p>{comment.notes}</p>
+                            {/if}
+                        </article>
+                    {/each}
+                </div>
+            {/if}
         </section>
     {/if}
 
@@ -196,6 +222,19 @@
             white-space: pre-wrap;
         }
     }
+
+    .comment-inline {
+        margin-top: 0.2rem;
+    }
+
+    .comment-inline-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.35rem;
+    }
+
     .comment-list {
         display: grid;
         gap: 0.55rem;

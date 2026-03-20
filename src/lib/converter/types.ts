@@ -1,3 +1,5 @@
+import type { Currency } from "../currency";
+
 export type RestaurantComment = {
     username?: string;
     tier: number;
@@ -20,6 +22,7 @@ export type Restaurant = {
 
 export type RestaurantDataset = {
     $schema: string;
+    currency: Currency;
     attribution?: {
         geocoding?: string;
     };
@@ -61,6 +64,7 @@ export type ConverterGeocoder = {
 
 export type ConvertCsvOptions = {
     schemaPath?: string;
+    currency?: Currency;
     geocodeDelayMs?: number;
     geocoder?: ConverterGeocoder;
     onProgress?: (event: ConversionProgressEvent) => void;

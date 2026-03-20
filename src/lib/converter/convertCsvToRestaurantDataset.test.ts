@@ -37,10 +37,12 @@ describe("convertCsvToRestaurantDataset", () => {
         ].join("\n");
 
         const dataset = await convertCsvToRestaurantDataset(csv, {
+            currency: { code: "JPY", symbol: "JPY " },
             geocoder: createGeocoder(),
         });
 
         expect(dataset.attribution).toBeUndefined();
+        expect(dataset.currency).toEqual({ code: "JPY", symbol: "JPY " });
         expect(dataset.items).toHaveLength(1);
         expect(dataset.items[0]).toMatchObject({
             name: "測試店",
@@ -312,5 +314,19 @@ describe("convertCsvToRestaurantDataset", () => {
                 { geocoder: createGeocoder(), geocodeDelayMs: 0 },
             ),
         ).rejects.toThrow('Conflicting values for "價位" across duplicate restaurant rows.');
+    });
+
+    it("defaults to TWD currency metadata when no override is provided", async () => {
+        const csv = ["店名,評級,價位,地址,評論者", "地址店,T4,320,台北市中正區測試路1號,alice"].join("\n");
+
+        const dataset = await convertCsvToRestaurantDataset(csv, {
+            geocoder: createGeocoder(),
+            geocodeDelayMs: 0,
+        });
+
+        expect(dataset.currency).toEqual({
+            code: "TWD",
+            symbol: "$",
+        });
     });
 });

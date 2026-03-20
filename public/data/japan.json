@@ -1,0 +1,165 @@
+{
+    "$schema": "./restaurants.schema.json",
+    "currency": {
+        "code": "JPY",
+        "symbol": "¥"
+    },
+    "view": {
+        "bounds": [
+            [34.6546323585794, 135.5002222483667],
+            [41.77201393666228, 140.74131699587147]
+        ]
+    },
+    "items": [
+        {
+            "name": "Gelato Natur",
+            "lat": 40.82661422748187,
+            "lng": 140.7362060867116,
+            "tier": 1,
+            "priceBucket": 500,
+            "address": "1 Chome-6-22 Shinmachi, Aomori, 030-0801日本",
+            "comments": [
+                {
+                    "tier": 1,
+                    "notes": "其實是本店，但口味選擇比較少；老闆人很好幫我找到手機"
+                }
+            ],
+            "tags": ["冰品", "甜點"]
+        },
+        {
+            "name": "gelato natura due",
+            "lat": 40.83019917348239,
+            "lng": 140.73503963648142,
+            "tier": 1,
+            "priceBucket": 500,
+            "address": "日本〒038-0012 Aomori, Yanakawa, 1 Chome−4−2 1F",
+            "comments": [
+                {
+                    "tier": 1,
+                    "notes": "牛奶王林跟紅玉超好吃"
+                }
+            ],
+            "tags": ["冰品", "甜點"]
+        },
+        {
+            "name": "お食事処 おさない",
+            "lat": 40.82796542979948,
+            "lng": 140.7359844626654,
+            "tier": 2,
+            "priceBucket": 1500,
+            "address": "日本〒030-0801 Aomori, Shinmachi, 1 Chome−1−17 1F",
+            "comments": [
+                {
+                    "tier": 2,
+                    "notes": "烤帆立貝套餐、炸帆立貝咖哩、漁師燒好吃；炸帆立貝定食是坑盤子觀光客用的；蘋果煎餃沒什麼料"
+                }
+            ],
+            "tags": ["拉麵", "咖哩", "海鮮"]
+        },
+        {
+            "name": "青森食堂",
+            "lat": 40.827592180233964,
+            "lng": 140.7341611343319,
+            "tier": 3,
+            "priceBucket": 1500,
+            "address": "日本〒038-0012 Aomori, Yanakawa, 1 Chome−2−3 ラビナ 1F",
+            "comments": [
+                {
+                    "tier": 3,
+                    "notes": "炒飯超好吃，其他還行"
+                }
+            ],
+            "tags": ["日式", "拉麵", "炸物", "飯食"]
+        },
+        {
+            "name": "Sweets Factory pampam ASPAM Store",
+            "lat": 40.82957416522122,
+            "lng": 140.74110998655956,
+            "tier": 2,
+            "priceBucket": 500,
+            "address": "日本〒030-0803 Aomori, Yasukata, 1 Chome−1−40 1F",
+            "comments": [
+                {
+                    "tier": 2,
+                    "notes": "ショソン最好吃"
+                }
+            ],
+            "tags": ["甜點"]
+        },
+        {
+            "name": "ラウンジ・センチュリー アスパム店",
+            "lat": 40.82972027227017,
+            "lng": 140.74131699587147,
+            "tier": 4,
+            "priceBucket": 1000,
+            "address": "日本〒030-0803 Aomori, Yasukata, 1 Chome−1−40 アスパム 1F",
+            "comments": [
+                {
+                    "tier": 4,
+                    "notes": "拉麵普通"
+                }
+            ],
+            "tags": ["日式", "拉麵", "炸物", "飯食", "咖哩"]
+        },
+        {
+            "name": "幸運小丑漢堡 海灣地區本店",
+            "lat": 41.765762444148926,
+            "lng": 140.71490886097857,
+            "tier": 1,
+            "priceBucket": 1000,
+            "address": "23-18 Suehirocho, Hakodate, Hokkaido 040-0053日本",
+            "comments": [
+                {
+                    "tier": 1,
+                    "notes": "函館名物，1號餐不會錯，咖哩跟肉跟漢堡包都很好吃"
+                }
+            ],
+            "tags": ["漢堡", "咖哩"]
+        },
+        {
+            "name": "函館麵屋 四代目",
+            "lat": 41.77201393666228,
+            "lng": 140.72970655963454,
+            "tier": 3,
+            "priceBucket": 1500,
+            "address": "6-10 Matsukazecho, Hakodate, Hokkaido 040-0035日本",
+            "comments": [
+                {
+                    "tier": 3,
+                    "notes": "普通的還行，炙燒叉燒不錯，學生證可以加麵"
+                }
+            ],
+            "tags": ["麵食", "拉麵", "日式"]
+        },
+        {
+            "name": "とんかつ和幸 アトレ川崎店",
+            "lat": 35.53156287154946,
+            "lng": 139.69795664303467,
+            "tier": 4,
+            "priceBucket": 2000,
+            "address": "日本〒210-0007 Kanagawa, Kawasaki, Kawasaki Ward, Ekimae Honcho, 26-1 アトレ川崎 ７Ｆ",
+            "comments": [
+                {
+                    "tier": 4,
+                    "notes": "豬排煮超他媽鹹，豬排本身還行"
+                }
+            ],
+            "tags": ["炸物", "飯食"]
+        },
+        {
+            "name": "無鐵砲 大阪店",
+            "lat": 34.6546323585794,
+            "lng": 135.5002222483667,
+            "tier": 2,
+            "priceBucket": 1000,
+            "address": "1 Chome-5-21 Ebisuhonmachi, Naniwa Ward, Osaka, 556-0013日本",
+            "comments": [
+                {
+                    "tier": 2,
+                    "notes": "著名的水泥拉麵，我自己覺得沒有很濃，但不錯吃"
+                }
+            ],
+            "tags": ["拉麵"]
+        }
+    ]
+}

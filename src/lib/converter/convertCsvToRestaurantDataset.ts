@@ -1,5 +1,6 @@
 import { parse } from "csv/browser/esm/sync";
 import { z } from "zod";
+import { DEFAULT_CURRENCY, type Currency } from "../currency";
 import { CLOSED_TIER, CONTROVERSIAL_TIER } from "../tier";
 import { createArcGisGeocoder } from "./geocoding";
 import type { ConvertCsvOptions, CsvRow, Restaurant, RestaurantComment, RestaurantDataset } from "./types";
@@ -15,6 +16,7 @@ export async function convertCsvToRestaurantDataset(
     csvText: string,
     {
         schemaPath = DEFAULT_SCHEMA_PATH,
+        currency = DEFAULT_CURRENCY,
         geocodeDelayMs = 1100,
         geocoder = createArcGisGeocoder(),
         onProgress,
@@ -63,7 +65,7 @@ export async function convertCsvToRestaurantDataset(
     }
 
     const items = [...restaurantByKey.values()];
-    const dataset = buildDataset(items, schemaPath, usedGeocoding);
+    const dataset = buildDataset(items, schemaPath, currency, usedGeocoding);
 
     onProgress?.({
         type: "complete",
@@ -144,9 +146,15 @@ async function buildRestaurant(row: CsvRow, geocoder: NonNullable<ConvertCsvOpti
     };
 }
 
-function buildDataset(items: Restaurant[], schemaPath: string, usedGeocoding: boolean): RestaurantDataset {
+function buildDataset(
+    items: Restaurant[],
+    schemaPath: string,
+    currency: Currency,
+    usedGeocoding: boolean,
+): RestaurantDataset {
     return {
         $schema: schemaPath,
+        currency,
         ...(usedGeocoding
             ? {
                   attribution: {

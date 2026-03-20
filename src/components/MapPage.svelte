@@ -1,6 +1,14 @@
 <script lang="ts">
     import { loadRestaurants as fetchRestaurants, loadSourceList, type DataSource } from "../lib/data";
-    import { compareTierDescending, tierBadge, tierName, type Restaurant } from "../lib/restaurants";
+    import {
+        compareTierDescending,
+        DEFAULT_CURRENCY,
+        formatPrice,
+        tierBadge,
+        tierName,
+        type Currency,
+        type Restaurant,
+    } from "../lib/restaurants";
     import LegendPanel from "./LegendPanel.svelte";
     import OverlayPanel from "./OverlayPanel.svelte";
     import RestaurantMap from "./RestaurantMap.svelte";
@@ -12,6 +20,7 @@
     let selectedSourcePath = $state("");
     let geocodeAttribution = $state<string | null>(null);
     let defaultBounds = $state<[[number, number], [number, number]] | null>(null);
+    let currency = $state<Currency>(DEFAULT_CURRENCY);
     let allRestaurants = $state<Restaurant[]>([]);
     let selectedTag = $state("all");
     let selectedTier = $state("all");
@@ -119,6 +128,7 @@
             }
 
             allRestaurants = loadedRestaurants.items.sort((a, b) => compareTierDescending(a.tier, b.tier));
+            currency = loadedRestaurants.currency;
             geocodeAttribution = loadedRestaurants.geocodeAttribution;
             defaultBounds = loadedRestaurants.defaultBounds;
             loadError = null;
@@ -163,6 +173,7 @@
 
     function clearRestaurantData() {
         allRestaurants = [];
+        currency = DEFAULT_CURRENCY;
         geocodeAttribution = null;
         defaultBounds = null;
     }
@@ -221,7 +232,7 @@
         <p class="load-error">{loadError}</p>
     {/if}
 
-    <RestaurantMap restaurants={filteredRestaurants} {geocodeAttribution} {defaultBounds}>
+    <RestaurantMap restaurants={filteredRestaurants} {currency} {geocodeAttribution} {defaultBounds}>
         <OverlayPanel
             open={filterPanelOpen}
             onOpenChange={setFilterPanelOpen}
@@ -266,7 +277,7 @@
                         >
                             <option value="all">最低不限</option>
                             {#each priceOptions as price (price)}
-                                <option value={String(price)}>${price}</option>
+                                <option value={String(price)}>{formatPrice(price, currency)}</option>
                             {/each}
                         </select>
                         <span class="price-range-separator">至</span>
@@ -276,7 +287,7 @@
                         >
                             <option value="all">最高不限</option>
                             {#each priceOptions as price (price)}
-                                <option value={String(price)}>${price}</option>
+                                <option value={String(price)}>{formatPrice(price, currency)}</option>
                             {/each}
                         </select>
                     </div>

@@ -2,15 +2,17 @@
     import L from "leaflet";
     import type { Snippet } from "svelte";
     import { fallbackView, fallbackZoom, provider } from "../lib/map";
-    import { mountPopupContent, tierBadge, tierColor, type Restaurant } from "../lib/restaurants";
+    import { mountPopupContent, tierBadge, tierColor, type Currency, type Restaurant } from "../lib/restaurants";
 
     let {
         restaurants = [],
+        currency,
         geocodeAttribution = null,
         defaultBounds = null,
         children,
     }: {
         restaurants: Restaurant[];
+        currency: Currency;
         geocodeAttribution?: string | null;
         defaultBounds?: [[number, number], [number, number]] | null;
         children?: Snippet;
@@ -66,7 +68,7 @@
         group.clearLayers();
 
         for (const shop of restaurants) {
-            const popupContent = mountPopupContent(shop);
+            const popupContent = mountPopupContent(shop, currency);
 
             L.circleMarker([shop.lat, shop.lng], {
                 radius: 10,

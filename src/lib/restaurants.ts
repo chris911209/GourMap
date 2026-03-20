@@ -1,5 +1,6 @@
 import { mount, unmount } from "svelte";
 import MarkerPopup from "../components/MarkerPopup.svelte";
+import { DEFAULT_CURRENCY, formatPrice, type Currency, type CurrencyCode } from "./currency";
 export {
     CLOSED_TIER,
     CONTROVERSIAL_TIER,
@@ -10,6 +11,14 @@ export {
     type Tier,
 } from "./tier";
 import type { Tier } from "./tier";
+export {
+    CURRENCY_CODES,
+    CURRENCY_PRESETS,
+    DEFAULT_CURRENCY,
+    formatPrice,
+    type Currency,
+    type CurrencyCode,
+} from "./currency";
 
 export type PriceBucket = number;
 export type RestaurantComment = {
@@ -32,6 +41,7 @@ export type Restaurant = {
 
 export type RestaurantDataset = {
     $schema?: string;
+    currency: Currency;
     attribution?: {
         geocoding?: string;
     };
@@ -47,7 +57,7 @@ export type PopupContentHandle = {
     destroy: () => void;
 };
 
-export function mountPopupContent(shop: Restaurant): PopupContentHandle {
+export function mountPopupContent(shop: Restaurant, currency: Currency = DEFAULT_CURRENCY): PopupContentHandle {
     let container = document.createElement("div");
     let component: Record<string, any> | null = null;
 
@@ -58,6 +68,7 @@ export function mountPopupContent(shop: Restaurant): PopupContentHandle {
 
         component = mount(MarkerPopup, {
             props: {
+                currency,
                 restaurant: shop,
             },
             target: container,

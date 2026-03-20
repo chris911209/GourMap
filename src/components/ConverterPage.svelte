@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { CURRENCY_PRESETS, DEFAULT_CURRENCY } from "../lib/restaurants";
     import { convertCsvToRestaurantDataset, type ConversionProgressEvent } from "../lib/converter";
 
     const csvChecklist = [
@@ -17,8 +18,12 @@
     let outputText = $state("");
     let downloadHref = $state<string | null>(null);
     let downloadName = $state("converted.json");
+    let selectedCurrencyCode = $state(DEFAULT_CURRENCY.code);
 
     const homeHref = import.meta.env.BASE_URL;
+    let selectedCurrency = $derived(
+        CURRENCY_PRESETS.find((currency) => currency.code === selectedCurrencyCode) ?? DEFAULT_CURRENCY,
+    );
 
     $effect(() => {
         if (!outputText) {
@@ -60,6 +65,7 @@
         try {
             const csvText = await file.text();
             const dataset = await convertCsvToRestaurantDataset(csvText, {
+                currency: selectedCurrency,
                 onProgress(event: ConversionProgressEvent) {
                     progressMessage = formatProgress(event);
                 },
@@ -140,6 +146,15 @@
         <label class="converter-field">
             <span>CSV 檔案</span>
             <input type="file" accept=".csv,text/csv" onchange={handleFileChange} />
+        </label>
+
+        <label class="converter-field">
+            <span>資料集幣別</span>
+            <select bind:value={selectedCurrencyCode}>
+                {#each CURRENCY_PRESETS as currency (currency.code)}
+                    <option value={currency.code}>{currency.code} ({currency.symbol}123)</option>
+                {/each}
+            </select>
         </label>
 
         <div class="converter-actions">
@@ -348,7 +363,8 @@
         font-weight: 700;
     }
 
-    .converter-field input {
+    .converter-field input,
+    .converter-field select {
         display: block;
         width: 100%;
         max-width: 100%;
@@ -518,6 +534,7 @@
     }
 
     .converter-field input:focus,
+    .converter-field select:focus,
     .convert-button:focus,
     .download-link:focus,
     .converter-back:focus,

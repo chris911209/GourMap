@@ -1,3 +1,9 @@
+export type RestaurantComment = {
+    username?: string;
+    tier: number;
+    notes?: string;
+};
+
 export type CsvRow = Record<string, string>;
 
 export type Restaurant = {
@@ -7,7 +13,7 @@ export type Restaurant = {
     tier: number;
     priceBucket: number;
     address?: string;
-    notes?: string;
+    comments?: RestaurantComment[];
     plusCode?: string;
     tags?: string[];
 };

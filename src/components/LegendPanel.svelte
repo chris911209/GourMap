@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tierBadge, tierColor, tierName } from "../lib/restaurants";
+    import { CLOSED_TIER, CONTROVERSIAL_TIER, tierBadge, tierColor, tierName } from "../lib/restaurants";
     import OverlayPanel from "./OverlayPanel.svelte";
 
     const converterHref = `${import.meta.env.BASE_URL}converter`;
@@ -15,6 +15,20 @@
         selectedTier?: string;
         onTierSelect?: (tier: string) => void;
     } = $props();
+
+    const legendTiers = Object.keys(tierName)
+        .map(Number)
+        .sort((left, right) => {
+            if (left === CONTROVERSIAL_TIER && right === CLOSED_TIER) {
+                return -1;
+            }
+
+            if (left === CLOSED_TIER && right === CONTROVERSIAL_TIER) {
+                return 1;
+            }
+
+            return left - right;
+        });
 </script>
 
 <OverlayPanel
@@ -28,19 +42,19 @@
     closeLabel="收起圖例"
 >
     <ul class="legend-list">
-        {#each Object.entries(tierName) as [tier, label]}
+        {#each legendTiers as tier (tier)}
             <li>
                 <button
-                    class:active={selectedTier === tier}
+                    class:active={selectedTier === String(tier)}
                     class="legend-button"
                     type="button"
-                    onclick={() => onTierSelect(tier)}
+                    onclick={() => onTierSelect(String(tier))}
                 >
                     <span class="legend-label">
-                        <span class="legend-swatch" style={`background:${tierColor[Number(tier)]}`}></span>
-                        <span class="legend-tier">{tierBadge(Number(tier))}</span>
+                        <span class="legend-swatch" style={`background:${tierColor[tier]}`}></span>
+                        <span class="legend-tier">{tierBadge(tier)}</span>
                     </span>
-                    <strong>{label}</strong>
+                    <strong>{tierName[tier]}</strong>
                 </button>
             </li>
         {/each}

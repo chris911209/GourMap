@@ -1,9 +1,22 @@
 import { mount, unmount } from "svelte";
 import MarkerPopup from "../components/MarkerPopup.svelte";
-export { CLOSED_TIER, compareTierDescending, tierBadge, tierColor, tierName, type Tier } from "./tier";
+export {
+    CLOSED_TIER,
+    CONTROVERSIAL_TIER,
+    compareTierDescending,
+    tierBadge,
+    tierColor,
+    tierName,
+    type Tier,
+} from "./tier";
 import type { Tier } from "./tier";
 
 export type PriceBucket = number;
+export type RestaurantComment = {
+    username?: string;
+    tier: Tier;
+    notes?: string;
+};
 
 export type Restaurant = {
     name: string;
@@ -12,7 +25,7 @@ export type Restaurant = {
     tier: Tier;
     priceBucket: PriceBucket;
     address?: string;
-    notes?: string;
+    comments?: RestaurantComment[];
     plusCode?: string;
     tags?: string[];
 };

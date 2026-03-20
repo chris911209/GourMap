@@ -23,7 +23,7 @@ You can start from this [Google Sheets template](https://docs.google.com/spreads
 
 Column details are documented in the Google Sheets template. `店名`, `評級`, and `價位` are required. You must provide at least one of `經緯度` or `地址`. `筆記` and `標籤` are optional.
 
-If a restaurant only has one comment, for example when the map is just your own personal list, the popup can use the simpler single-comment layout. If your map is shared and edited by multiple people with different opinions, you can switch to the newer comment card UI instead. This is controlled by `WRAP_SINGLE_COMMENT_IN_CARD` in `src/components/MarkerPopup.svelte`. Set it to `false` to keep the original inline layout, or `true` to wrap even a single comment in a card.
+If a restaurant only has one comment, for example when the map is just your own personal list, the popup can use the simpler single-comment layout. If your map is shared and edited by multiple people with different opinions, you can switch to the newer comment card UI instead. This is controlled by `ALWAYS_USE_COMMENT_CARD` in `src/components/MarkerPopup.svelte`. Set it to `false` to keep the original inline layout, or `true` to wrap even a single comment in a card.
 
 ### 3. Convert the CSV
 

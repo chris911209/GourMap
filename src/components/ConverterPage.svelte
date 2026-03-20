@@ -21,10 +21,6 @@
     const homeHref = import.meta.env.BASE_URL;
 
     $effect(() => {
-        document.title = "GourMap CSV 轉換器";
-    });
-
-    $effect(() => {
         if (!outputText) {
             downloadHref = null;
             return;
@@ -105,16 +101,20 @@
     }
 </script>
 
+<svelte:head>
+    <title>GourMap CSV 轉換器</title>
+</svelte:head>
+
 <main class="converter-page">
     <section class="converter-hero">
         <a class="converter-back" href={homeHref}>
             <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
             <span>返回地圖</span>
         </a>
-        <h1>地圖用CSV轉換器</h1>
+        <h1>專用CSV轉換器</h1>
     </section>
 
-    <section class="converter-card">
+    <section class="converter-card guide-card">
         <details class="guide-block">
             <summary class="guide-summary">
                 <span class="guide-title">
@@ -134,7 +134,9 @@
                 </p>
             </div>
         </details>
+    </section>
 
+    <section class="converter-card">
         <label class="converter-field">
             <span>CSV 檔案</span>
             <input type="file" accept=".csv,text/csv" onchange={handleFileChange} />
@@ -341,17 +343,36 @@
     .converter-field {
         display: grid;
         gap: 0.4rem;
+        min-width: 0;
         color: var(--text-h);
         font-weight: 700;
     }
 
     .converter-field input {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
         padding: 0.85rem;
         border: 1px dashed rgba(8, 6, 13, 0.18);
         border-radius: 1rem;
         background: rgba(255, 250, 242, 0.95);
+        box-sizing: border-box;
+        overflow: hidden;
         font: inherit;
         color: var(--text-h);
+    }
+
+    .converter-field input::file-selector-button {
+        margin-right: 0.75rem;
+        padding: 0.5rem 0.9rem;
+        border: 0;
+        border-radius: 0.75rem;
+        background: rgba(8, 6, 13, 0.82);
+        color: white;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
     }
 
     .converter-actions {
@@ -508,6 +529,40 @@
     @media (max-width: 720px) {
         .converter-page {
             padding: 1rem;
+        }
+
+        .converter-card {
+            gap: 1rem;
+            padding: 0.875rem;
+            border-radius: 1.15rem;
+        }
+
+        .guide-block {
+            padding: 0.9rem;
+        }
+
+        .guide-summary,
+        .preview-header,
+        .progress-meta {
+            gap: 0.6rem;
+        }
+
+        .guide-title {
+            min-width: 0;
+        }
+
+        .guide-summary h2 {
+            font-size: 1rem;
+        }
+
+        .converter-actions {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .convert-button,
+        .download-link {
+            width: 100%;
         }
 
         .preview-output {

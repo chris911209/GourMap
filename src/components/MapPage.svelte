@@ -301,7 +301,9 @@
         justify-content: space-between;
         gap: 1rem;
         padding: 1rem;
-        background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+        background:
+            radial-gradient(circle at top left, rgba(255, 72, 62, 0.14), transparent 28%),
+            linear-gradient(180deg, #fffaf2 0%, #fff 48%, #f6f1e8 100%);
         border-bottom: 1px solid #ece8df;
 
         h1 {

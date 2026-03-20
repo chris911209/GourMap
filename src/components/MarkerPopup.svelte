@@ -2,7 +2,7 @@
     import { tierBadge, tierColor, tierName, type Restaurant } from "../lib/restaurants";
 
     // Keep single-comment restaurants on the older inline notes layout unless this is toggled on.
-    const WRAP_SINGLE_COMMENT_IN_CARD = false;
+    const WRAP_SINGLE_COMMENT_IN_CARD = true;
 
     let { restaurant } = $props<{ restaurant: Restaurant }>();
 </script>

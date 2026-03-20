@@ -53,3 +53,11 @@ Open `public/data/.sourcelist.json` and add your converted JSON file to the list
     }
 ]
 ```
+
+## How to update your fork to the latest version?
+
+The original author may update this project from time to time with new features or bug fixes. If you want to merge those updates into your own fork, you can follow these steps:
+
+1. Open your forked repository on GitHub.
+2. Click `Sync fork`, then choose `Update branch`. GitHub will automatically merge the latest commits from the original repository into your fork.
+3. If there are conflicts, GitHub will ask you to resolve them manually. Open the conflicting files, update them as needed, and commit the resolved version.

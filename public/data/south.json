@@ -14,7 +14,12 @@
             "tier": 0,
             "priceBucket": 0,
             "address": "946屏東縣恆春鎮南灣路仁愛巷65號",
-            "notes": "頂中頂 溫體西瓜 熟食生魚片",
+            "comments": [
+                {
+                    "tier": 0,
+                    "notes": "頂中頂 溫體西瓜 熟食生魚片"
+                }
+            ],
             "tags": ["小吃", "麵食"]
         },
         {
@@ -24,7 +29,12 @@
             "tier": 5,
             "priceBucket": 200,
             "address": "300新竹市東區建功一路44號",
-            "notes": "食物不難吃 真正影響食慾的是環境衛生",
+            "comments": [
+                {
+                    "tier": 5,
+                    "notes": "食物不難吃 真正影響食慾的是環境衛生"
+                }
+            ],
             "tags": ["小吃"]
         },
         {
@@ -36,6 +46,7 @@
             "address": "30071新竹市東區建新路17號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -48,7 +59,13 @@
             "tier": 4,
             "priceBucket": 100,
             "address": "300新竹市東區建新路11號",
-            "notes": "招牌烤肉很香 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 4,
+                    "notes": "招牌烤肉很香"
+                }
+            ],
             "tags": ["便當"]
         },
         {
@@ -58,7 +75,13 @@
             "tier": 3,
             "priceBucket": 150,
             "address": "30071新竹市東區建新路66號2樓",
-            "notes": "濃湯很頂，白醬沒什麼味道，有飲料/冰淇淋吧 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "濃湯很頂，白醬沒什麼味道，有飲料/冰淇淋吧"
+                }
+            ],
             "tags": ["麵食", "義大利麵"]
         },
         {
@@ -68,7 +91,13 @@
             "tier": 4,
             "priceBucket": 150,
             "address": "300新竹市東區建新路92號1F",
-            "notes": "不要點泰醬，薑末太多了 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 4,
+                    "notes": "不要點泰醬，薑末太多了"
+                }
+            ],
             "tags": ["麵食", "義大利麵"]
         },
         {
@@ -80,6 +109,7 @@
             "address": "300新竹市東區建功一路64號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 4
                 }
             ],
@@ -94,6 +124,7 @@
             "address": "300新竹市東區建功一路35號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 5
                 }
             ],
@@ -106,7 +137,13 @@
             "tier": 2,
             "priceBucket": 150,
             "address": "300新竹市東區建功一路38-1號",
-            "notes": "煎餃>鍋貼>水餃，但都不錯；特製辣醬油很香 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 2,
+                    "notes": "煎餃>鍋貼>水餃，但都不錯；特製辣醬油很香"
+                }
+            ],
             "tags": ["小吃"]
         },
         {
@@ -118,6 +155,7 @@
             "address": "300新竹市東區建功一路39號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -132,6 +170,7 @@
             "address": "300新竹市東區建新路31號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -146,6 +185,7 @@
             "address": "300新竹市東區建新路27號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 2
                 }
             ],
@@ -160,6 +200,7 @@
             "address": "300新竹市東區建新路21號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -174,6 +215,7 @@
             "address": "300新竹市東區建新路19號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -188,6 +230,7 @@
             "address": "300045新竹市東區建新路28號一樓",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 4
                 }
             ],
@@ -202,6 +245,7 @@
             "address": "30071新竹市東區建新路46號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -214,7 +258,13 @@
             "tier": 4,
             "priceBucket": 100,
             "address": "300新竹市東區建新路14號",
-            "notes": "滷肉飯很濕 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 4,
+                    "notes": "滷肉飯很濕"
+                }
+            ],
             "tags": ["小吃", "飯食"]
         },
         {
@@ -224,7 +274,13 @@
             "tier": 1,
             "priceBucket": 150,
             "address": "300新竹市東區建中路7號",
-            "notes": "必點白菜滷；油豆腐滷肉飯煲湯都不錯 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 1,
+                    "notes": "必點白菜滷；油豆腐滷肉飯煲湯都不錯"
+                }
+            ],
             "tags": ["小吃", "飯食"]
         },
         {
@@ -234,7 +290,13 @@
             "tier": 1,
             "priceBucket": 200,
             "address": "300新竹市東區水源街44號",
-            "notes": "黑咖哩+菇雞很好吃；豬排好吃；小裸雞容易吃到太膩 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 1,
+                    "notes": "黑咖哩+菇雞很好吃；豬排好吃；小裸雞容易吃到太膩"
+                }
+            ],
             "tags": ["咖哩", "炸物"]
         },
         {
@@ -244,7 +306,13 @@
             "tier": 3,
             "priceBucket": 150,
             "address": "300新竹市東區水源街23號",
-            "notes": "水餃便宜好吃；有自助飲料、冰淇淋、蒜末 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "水餃便宜好吃；有自助飲料、冰淇淋、蒜末"
+                }
+            ],
             "tags": ["小吃", "麵食", "飯食"]
         },
         {
@@ -256,6 +324,7 @@
             "address": "300新竹市東區建功一路6號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 2
                 }
             ],
@@ -268,7 +337,13 @@
             "tier": 2,
             "priceBucket": 150,
             "address": "300新竹市東區建功路28號",
-            "notes": "臭豆腐好吃 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 2,
+                    "notes": "臭豆腐好吃"
+                }
+            ],
             "tags": ["小吃", "鍋物"]
         },
         {
@@ -280,6 +355,7 @@
             "address": "300新竹市東區光復路二段298巷7弄14號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 4
                 }
             ],
@@ -294,6 +370,7 @@
             "address": "300新竹市東區光復路二段298巷7弄13號1樓",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -306,7 +383,13 @@
             "tier": 3,
             "priceBucket": 200,
             "address": "300新竹市東區建中路3號",
-            "notes": "法式吐司好吃 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "法式吐司好吃"
+                }
+            ],
             "tags": ["西餐", "早午餐"]
         },
         {
@@ -318,6 +401,7 @@
             "address": "300新竹市東區水源街58號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 4
                 }
             ],
@@ -332,6 +416,7 @@
             "address": "300新竹市東區建新路6巷6號1樓",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 4
                 }
             ],
@@ -346,6 +431,7 @@
             "address": "300新竹市東區光復路二段436號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -360,6 +446,7 @@
             "address": "300新竹市東區光復路二段408號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 4
                 }
             ],
@@ -372,7 +459,13 @@
             "tier": 3,
             "priceBucket": 200,
             "address": "300新竹市東區光復路二段380號",
-            "notes": "肉不太新鮮；自助吧不錯 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "肉不太新鮮；自助吧不錯"
+                }
+            ],
             "tags": ["牛排"]
         },
         {
@@ -384,6 +477,7 @@
             "address": "300新竹市東區光復路二段352號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -398,6 +492,7 @@
             "address": "300新竹市東區建功一路56號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -412,6 +507,7 @@
             "address": "300新竹市東區建功一路30號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -426,6 +522,7 @@
             "address": "300新竹市東區建功路16號2樓",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 4
                 }
             ],
@@ -438,7 +535,13 @@
             "tier": 3,
             "priceBucket": 200,
             "address": "300新竹市東區建功路20號",
-            "notes": "就是白鬍子 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "就是白鬍子"
+                }
+            ],
             "tags": ["牛排"]
         },
         {
@@ -450,6 +553,7 @@
             "address": "300新竹市東區建功一路68號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -462,7 +566,13 @@
             "tier": 3,
             "priceBucket": 100,
             "address": "300新竹市東區建功路23號300",
-            "notes": "便宜管飽；衛生環境就那樣 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "便宜管飽；衛生環境就那樣"
+                }
+            ],
             "tags": ["小吃"]
         },
         {
@@ -472,7 +582,13 @@
             "tier": 3,
             "priceBucket": 300,
             "address": "300新竹市東區建功路33號",
-            "notes": "味道還行但太貴了 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "味道還行但太貴了"
+                }
+            ],
             "tags": ["印度", "咖哩"]
         },
         {
@@ -484,6 +600,7 @@
             "address": "300新竹市東區建功路27號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -496,7 +613,13 @@
             "tier": 1,
             "priceBucket": 100,
             "address": "300新竹市東區光復路二段101號",
-            "notes": "推海南雞飯、打拋豬飯 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 1,
+                    "notes": "推海南雞飯、打拋豬飯"
+                }
+            ],
             "tags": ["東南亞", "飯食"]
         },
         {
@@ -508,6 +631,7 @@
             "address": "300新竹市東區光復路二段101號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 2
                 }
             ],
@@ -522,6 +646,7 @@
             "address": "300新竹市東區光復路二段101號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -534,7 +659,13 @@
             "tier": 2,
             "priceBucket": 300,
             "address": "30044新竹市東區光復路二段732號",
-            "notes": "肉類品質好、湯頭好喝、冰淇淋好吃 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 2,
+                    "notes": "肉類品質好、湯頭好喝、冰淇淋好吃"
+                }
+            ],
             "tags": ["鍋物"]
         },
         {
@@ -546,6 +677,7 @@
             "address": "300新竹市東區東門街114號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 2
                 }
             ],
@@ -558,7 +690,13 @@
             "tier": 2,
             "priceBucket": 100,
             "address": "300新竹市北區城北街15號",
-            "notes": "蚵嗲小小一顆很好吃 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 2,
+                    "notes": "蚵嗲小小一顆很好吃"
+                }
+            ],
             "tags": ["小吃"]
         },
         {
@@ -570,6 +708,7 @@
             "address": "300新竹市東區東門市場1143號中央路102巷10號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 2
                 }
             ],
@@ -584,6 +723,7 @@
             "address": "300新竹市東區大同路1099號東門市場",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 2
                 }
             ],
@@ -596,6 +736,12 @@
             "tier": 2,
             "priceBucket": 50,
             "address": "300新竹市東區林森路2巷9號",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 2
+                }
+            ],
             "tags": ["甜點"]
         },
         {
@@ -607,6 +753,7 @@
             "address": "300新竹市東區金城一路67號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],
@@ -619,6 +766,12 @@
             "tier": 3,
             "priceBucket": 200,
             "address": "300新竹市東區建功路35號",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3
+                }
+            ],
             "tags": ["甜點", "牛排"]
         },
         {
@@ -628,7 +781,13 @@
             "tier": 1,
             "priceBucket": 300,
             "address": "300新竹市東區關新東路138號1樓",
-            "notes": "濃湯限量，排隊要排很久；湯頭濃而不膩，鹽味湯有魚介的鮮味 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 1,
+                    "notes": "濃湯限量，排隊要排很久；湯頭濃而不膩，鹽味湯有魚介的鮮味"
+                }
+            ],
             "tags": ["拉麵", "麵食"]
         },
         {
@@ -638,7 +797,13 @@
             "tier": 1,
             "priceBucket": 300,
             "address": "300新竹市東區新莊街206巷16號1樓",
-            "notes": "泡系雞白湯，環境舒適 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 1,
+                    "notes": "泡系雞白湯，環境舒適"
+                }
+            ],
             "tags": ["拉麵", "麵食"]
         },
         {
@@ -648,7 +813,13 @@
             "tier": 3,
             "priceBucket": 100,
             "address": "300新竹市東區清大小吃部",
-            "notes": "推滿豚月見丼、牛肉壽喜燒丼、雞排蛋包飯 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 3,
+                    "notes": "推滿豚月見丼、牛肉壽喜燒丼、雞排蛋包飯"
+                }
+            ],
             "tags": ["便當"]
         },
         {
@@ -658,7 +829,13 @@
             "tier": 6,
             "priceBucket": 150,
             "address": "300新竹市東區建功一路50之1號",
-            "notes": "新竹人認證難吃，環境髒亂 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 6,
+                    "notes": "新竹人認證難吃，環境髒亂"
+                }
+            ],
             "tags": ["便當"]
         },
         {
@@ -670,6 +847,7 @@
             "address": "300新竹市東區建功一路64-1號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 5
                 }
             ],
@@ -682,7 +860,13 @@
             "tier": 2,
             "priceBucket": 50,
             "address": "300新竹市東區建功一路4號",
-            "notes": "最好吃的泡芙 - 鴿",
+            "comments": [
+                {
+                    "username": "鴿",
+                    "tier": 2,
+                    "notes": "最好吃的泡芙"
+                }
+            ],
             "tags": ["甜點"]
         },
         {
@@ -694,6 +878,7 @@
             "address": "300新竹市東區建功一路40號",
             "comments": [
                 {
+                    "username": "鴿",
                     "tier": 3
                 }
             ],

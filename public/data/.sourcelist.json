@@ -1,4 +1,5 @@
 [
     { "path": "taipei.json", "name": "台北" },
-    { "path": "south.json", "name": "南部" }
+    { "path": "south.json", "name": "南部" },
+    { "path": "japan.json", "name": "日本" }
 ]

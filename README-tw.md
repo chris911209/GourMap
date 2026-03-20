@@ -1,6 +1,6 @@
 # GourMap 餐廳排行地圖
 
-[English README](./README.md) [展示連結](https://dogeon188.github.io/GourMap/)
+[English README](./README.md) [展示連結](https://chris911209.github.io/GourMap/)
 
 GourMap 是一個小型地圖應用，用來在互動式地圖上瀏覽個人整理的餐廳資料集。大部分程式撰寫由 Codex 協助完成。靈感來自 [台北市漢堡店家排名地圖](https://hsieh-george.github.io/taipei-burger-map/)。
 

@@ -1,6 +1,6 @@
 # GourMap Restaurant Ranking Map
 
-[繁體中文 README](./README-tw.md) [Live demo](https://dogeon188.github.io/GourMap/)
+[繁體中文 README](./README-tw.md) [Live demo](https://chris911209.github.io/GourMap/)
 
 GourMap is a small interactive map app for browsing personal restaurant datasets on a map. Most of the code was written with help from Codex. The project was inspired by [Taipei Burger Map](https://hsieh-george.github.io/taipei-burger-map/).
 

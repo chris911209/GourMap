@@ -47,7 +47,7 @@
     </ul>
 
     <div class="legend-links">
-        <a class="legend-source-link" href="https://github.com/Dogeon188/GourMap" target="_blank" rel="noreferrer">
+        <a class="legend-source-link" href="https://github.com/chris911209/GourMap" target="_blank" rel="noreferrer">
             <img class="legend-source-link__icon" src={`${import.meta.env.BASE_URL}github.png`} alt="" aria-hidden="true" />
             <span>Source code</span>
         </a>

@@ -2,7 +2,7 @@
     import { tierBadge, tierColor, tierName, type Restaurant } from "../lib/restaurants";
 
     // Keep single-comment restaurants on the older inline notes layout unless this is toggled on.
-    const WRAP_SINGLE_COMMENT_IN_CARD = false;
+    const ALWAYS_USE_COMMENT_CARD = false;
 
     let { restaurant } = $props<{ restaurant: Restaurant }>();
 </script>
@@ -41,7 +41,7 @@
     {#if restaurant.comments && restaurant.comments.length > 0}
         <section class="comments">
             <span class="meta-label">Comments</span>
-            {#if restaurant.comments.length === 1 && !WRAP_SINGLE_COMMENT_IN_CARD}
+            {#if restaurant.comments.length === 1 && !ALWAYS_USE_COMMENT_CARD}
                 {@const comment = restaurant.comments[0]}
                 <div class="comment-inline">
                     {#if comment.username}

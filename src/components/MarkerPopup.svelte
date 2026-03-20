@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { tierBadge, tierColor, tierName, type Restaurant } from "../lib/restaurants";
+    import { formatPrice, tierBadge, tierColor, tierName, type Currency, type Restaurant } from "../lib/restaurants";
 
     // Keep single-comment restaurants on the older inline notes layout unless this is toggled on.
     const ALWAYS_USE_COMMENT_CARD = true;
 
-    let { restaurant } = $props<{ restaurant: Restaurant }>();
+    let { currency, restaurant } = $props<{ currency: Currency; restaurant: Restaurant }>();
 </script>
 
 <div class="popup-content">
@@ -25,7 +25,7 @@
             <span class="material-symbols-outlined">payments</span>
             <div class="meta-copy">
                 <span class="meta-label">價位</span>
-                <strong class="meta-value">${restaurant.priceBucket}</strong>
+                <strong class="meta-value">{formatPrice(restaurant.priceBucket, currency)}</strong>
             </div>
         </div>
     </div>

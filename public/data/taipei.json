@@ -1,5 +1,9 @@
 {
     "$schema": "./restaurants.schema.json",
+    "currency": {
+        "code": "TWD",
+        "symbol": "$"
+    },
     "view": {
         "bounds": [
             [

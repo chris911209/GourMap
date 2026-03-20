@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CURRENCY_CODES, DEFAULT_CURRENCY, type Currency } from "./currency";
 import { type Restaurant, type RestaurantComment } from "./restaurants";
 
 export type DataSource = {
@@ -8,6 +9,7 @@ export type DataSource = {
 
 export type LoadedRestaurants = {
     items: Restaurant[];
+    currency: Currency;
     geocodeAttribution: string | null;
     defaultBounds: [[number, number], [number, number]] | null;
 };
@@ -25,6 +27,10 @@ const restaurantCommentSchema = z.object({
     tier: z.number(),
     notes: z.string().optional(),
 });
+const currencySchema = z.object({
+    code: z.enum(CURRENCY_CODES),
+    symbol: z.string().min(1),
+});
 
 const restaurantSchema = z.object({
     name: z.string(),
@@ -40,6 +46,7 @@ const restaurantSchema = z.object({
 });
 
 const restaurantDatasetSchema = z.object({
+    currency: currencySchema,
     attribution: z
         .object({
             geocoding: z.string().optional(),
@@ -125,6 +132,7 @@ export async function loadRestaurants(path: string): Promise<LoadedRestaurants> 
                 ...(restaurant.tags ? { tags: restaurant.tags } : {}),
             } satisfies Restaurant;
         }),
+        currency: dataset.currency ?? DEFAULT_CURRENCY,
         geocodeAttribution: dataset.attribution?.geocoding ?? null,
         defaultBounds: dataset.view?.bounds ?? null,
     };

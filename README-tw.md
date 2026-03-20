@@ -53,3 +53,11 @@ bun run convert:csv -- list.csv --out public/data/list.json
     }
 ]
 ```
+
+## 如何將專案更新至最新版？
+
+原作者會不定期更新專案，加入新功能或修復問題。如果你想要把這些更新合併到你的 Fork 中，可以按照以下步驟操作：
+
+1. 在 GitHub 上打開你的專案頁面
+2. 點擊「Sync Fork」按鈕，然後選擇「Update branch」。這樣 GitHub 會自動把原作者的最新提交合併到你的 Fork 中。
+3. 如果有衝突，GitHub 會提示你手動解決衝突。你需要打開衝突的檔案，根據提示修改內容，然後提交解決衝突的版本。

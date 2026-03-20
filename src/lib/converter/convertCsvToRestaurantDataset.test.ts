@@ -121,9 +121,9 @@ describe("convertCsvToRestaurantDataset", () => {
         ).rejects.toThrow('CSV line 2 (店A): Unable to parse integer for "價位" from "abc".');
     });
 
-    it('parses any tier starting with "EX " as the closed tier', async () => {
+    it('parses any tier starting with "T7 " as the closed tier', async () => {
         const dataset = await convertCsvToRestaurantDataset(
-            "店名,評級,價位,地址\n已倒閉店,EX 搬家後歇業,200,台北市中正區測試路1號",
+            "店名,評級,價位,地址\n已倒閉店,T7 已倒閉,200,台北市中正區測試路1號",
             { geocoder: createGeocoder(), geocodeDelayMs: 0 },
         );
 

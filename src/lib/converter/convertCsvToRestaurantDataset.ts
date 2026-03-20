@@ -191,7 +191,7 @@ function parseCoordinates(value: string): [number, number] {
 }
 
 function parseTier(value: string): number {
-    if (/^EX\b/i.test(value.trim())) {
+    if (/^T7\b/i.test(value.trim())) {
         return CLOSED_TIER;
     }
 

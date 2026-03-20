@@ -68,10 +68,6 @@
         for (const shop of restaurants) {
             const popupContent = mountPopupContent(shop);
 
-            const destroyPopupContent = () => {
-                popupContent.destroy();
-            };
-
             L.circleMarker([shop.lat, shop.lng], {
                 radius: 10,
                 fillColor: tierColor[shop.tier],
@@ -84,9 +80,8 @@
                 .bindTooltip(`<b>${tierBadge(shop.tier)}</b> ${shop.name}`, { direction: "top", offset: [0, -10] })
                 .bindPopup(popupContent.element)
                 .on({
-                    popupopen: popupContent.mount,
-                    popupclose: destroyPopupContent,
-                    remove: destroyPopupContent,
+                    // Keep the popup content mounted so Leaflet never reopens and measures an empty container.
+                    remove: popupContent.destroy,
                 });
         }
 
